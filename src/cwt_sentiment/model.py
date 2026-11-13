@@ -14,7 +14,7 @@ from .features import MODEL_FEATURES
 
 
 def chronological_folds(data: pd.DataFrame, n_splits: int = 4):
-    """Yield expanding train/test dataframes, splitting unique dates (not panel rows)."""
+    """Yield expanding folds with training targets ending before test features begin."""
     dates = np.array(sorted(data["date"].dropna().astype(str).unique()))
     if len(dates) <= n_splits:
         raise ValueError(f"Need more than {n_splits} distinct dates; found {len(dates)}.")
@@ -23,6 +23,9 @@ def chronological_folds(data: pd.DataFrame, n_splits: int = 4):
         train_dates, test_dates = set(dates[train_idx]), set(dates[test_idx])
         train = data[data["date"].astype(str).isin(train_dates)].copy()
         test = data[data["date"].astype(str).isin(test_dates)].copy()
+        first_test_date = str(test["date"].astype(str).min())
+        if "next_date" in train:
+            train = train.loc[train["next_date"].astype(str).lt(first_test_date)].copy()
         yield train, test
 
 
@@ -50,12 +53,9 @@ def evaluate_oos(data: pd.DataFrame, n_splits: int = 4):
         predictions.append(fold_predictions)
         actual = test["target_return"].to_numpy(dtype=float)
         metrics.append({
-            "fold": fold_no,
-            "train_end": str(train["date"].max()),
-            "test_start": str(test["date"].min()),
-            "test_end": str(test["date"].max()),
-            "n_test": int(len(test)),
-            "mae_return": float(np.mean(np.abs(actual - pred))),
+            "fold": fold_no, "train_end": str(train["date"].max()),
+            "test_start": str(test["date"].min()), "test_end": str(test["date"].max()),
+            "n_test": int(len(test)), "mae_return": float(np.mean(np.abs(actual - pred))),
             "zero_baseline_mae": float(np.mean(np.abs(actual))),
             "directional_accuracy": float(np.mean(np.sign(actual) == np.sign(pred))),
         })
@@ -65,13 +65,19 @@ def evaluate_oos(data: pd.DataFrame, n_splits: int = 4):
 
 
 def forecast_latest(data: pd.DataFrame) -> pd.DataFrame:
-    """Fit the simple model on labeled history and forecast the latest available row per ticker."""
-    labeled = data.dropna(subset=["target_return"])
-    latest = data.sort_values(["ticker", "date"]).groupby("ticker", as_index=False).tail(1).copy()
-    if labeled.empty or latest.empty:
-        raise ValueError("Need labeled historical rows and an unlabeled/latest row to forecast.")
+    """Fit on labeled history strictly before each latest, unlabeled row."""
+    ordered = data.sort_values(["ticker", "date"])
+    latest = ordered.groupby("ticker", as_index=False).tail(1).copy()
+    if latest.empty:
+        raise ValueError("Need an unlabeled/latest row to forecast.")
+    if latest["target_return"].notna().any():
+        raise ValueError("Latest row must be unlabeled; refusing an in-sample forecast.")
+    cutoff = str(latest["date"].astype(str).min())
+    labeled = data.loc[data["target_return"].notna() & data["date"].astype(str).lt(cutoff)].copy()
+    if labeled.empty:
+        raise ValueError("No labeled historical rows exist before the unlabeled latest row.")
     model = _model()
     model.fit(labeled[MODEL_FEATURES], labeled["target_return"])
     latest["predicted_return"] = model.predict(latest[MODEL_FEATURES])
     latest["predicted_close"] = latest["close"] * np.exp(latest["predicted_return"])
-    return latest[["ticker", "date", "close", "predicted_return", "predicted_close"]]
+    return latest[["ticker", "date", "close", "predicted_return", "predicted_close"]].reset_index(drop=True)

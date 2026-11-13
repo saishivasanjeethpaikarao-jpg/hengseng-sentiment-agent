@@ -1,6 +1,6 @@
-# Source and free-tier notes
+# Historical source-discovery notes
 
-Checked against public pages and official documentation on 2026-11-13. These are access checks, not a completed scrape.
+These are the **pre-collection discovery notes**, preserved for provenance. Initial statements such as “unverified” or “no live dataset” below describe that earlier stage and are superseded by [RUN_RESULTS.md](RUN_RESULTS.md), [DATA_ACCESS.md](DATA_ACCESS.md), the source manifest, and actual collection-status JSONs. Local public collection was subsequently implemented; no Apify or Exa execution is implied.
 
 ## Assignment-listed source routes
 
@@ -19,7 +19,7 @@ The tentative source pairs remain **LIHKG + Moomoo** for Hong Kong and **Naver +
 - [Exa billing documentation](https://exa.ai/docs/admin/billing) lists $10 in Free-tier credits each month, says exhausted credits return `402 Payment Required`, and documents optional auto-recharge purchases. The user's remaining balance and auto-recharge state cannot be verified from the supplied standard API key, so no Exa request has been made. Use the Exa collector only after confirming both settings in the dashboard.
 - Apify's read-only [monthly usage endpoint](https://docs.apify.com/api/v2/users-me-usage-monthly-get) and [limits endpoint](https://docs.apify.com/api/v2/users-me-limits-get) were used to check plan/usage status. No social scrape or account-setting change was made.
 
-## Status
+## Initial status (superseded by RUN_RESULTS.md)
 
 No live social dataset, Exa results, forecasts, or performance metrics are claimed. A future collector must retain UTC timestamps and source URLs, respect a small request rate, deduplicate posts, and report missing author-follower data rather than invent it. Keep only public content and do not commit API keys or scraped datasets to the repository.
 The documented read-only [monthly usage endpoint](https://docs.apify.com/api/v2/users-me-usage-monthly-get) and [limits endpoint](https://docs.apify.com/api/v2/users-me-limits-get) are appropriate for checking an account's allowance before a future run. No social scrape or account-setting change was made.

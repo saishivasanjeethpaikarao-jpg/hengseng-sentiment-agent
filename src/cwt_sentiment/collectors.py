@@ -42,6 +42,25 @@ def _first(item: dict, candidates: tuple[str, ...], override: str | None = None)
     return None
 
 
+def _parse_count(value):
+    if value is None:
+        return None
+    if isinstance(value, str):
+        text = value.strip().replace(",", "").replace("+", "")
+        if not text:
+            return None
+        multiplier = 1
+        if text[-1:].upper() in {"K", "M", "B"}:
+            multiplier = {"K": 1_000, "M": 1_000_000, "B": 1_000_000_000}[text[-1].upper()]
+            text = text[:-1]
+        try:
+            return float(text) * multiplier
+        except ValueError:
+            return None
+    number = pd.to_numeric(value, errors="coerce")
+    return None if pd.isna(number) else float(number)
+
+
 def normalize_social_rows(items: list[dict], source: str, ticker: str,
                           field_map: dict[str, str] | None = None) -> pd.DataFrame:
     """Map common LIHKG/Telegram/community actor fields into the canonical post schema.
@@ -71,8 +90,7 @@ def normalize_social_rows(items: list[dict], source: str, ticker: str,
             row[field] = value
         row["text"] = "" if row.get("text") is None else str(row["text"])
         for field in ("likes", "reposts", "views", "author_followers"):
-            number = pd.to_numeric(row.get(field), errors="coerce")
-            row[field] = 0 if pd.isna(number) else float(number)
+            row[field] = _parse_count(row.get(field))
         rows.append(row)
     return pd.DataFrame(rows, columns=POST_COLUMNS)
 

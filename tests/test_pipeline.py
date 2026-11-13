@@ -1,9 +1,11 @@
 import numpy as np
 import pandas as pd
+import pytest
 
 from cwt_sentiment.collectors import normalize_social_rows, search_exa
+from cwt_sentiment.cli import main
 from cwt_sentiment.features import MODEL_FEATURES, aggregate_posts, build_training_frame
-from cwt_sentiment.model import chronological_folds, evaluate_oos
+from cwt_sentiment.model import chronological_folds, evaluate_oos, forecast_latest
 from cwt_sentiment.sentiment import score_sentiment
 
 
@@ -16,7 +18,7 @@ def test_baseline_sentiment_has_expected_signs():
 
 def test_actor_output_normalizes_to_canonical_schema():
     rows = normalize_social_rows(
-        [{"created_at": "2026-10-01T08:30:00Z", "own_text": "看多", "like_count": 3,
+        [{"created_at": "2026-10-01T08:30:00Z", "own_text": "看多", "like_count": 3, "views": "1.2K",
           "thread_url": "https://example.test/thread/1", "thread_id": "1"}],
         source="LIHKG", ticker="0700.HK",
     )
@@ -25,6 +27,22 @@ def test_actor_output_normalizes_to_canonical_schema():
     assert rows.loc[0, "timestamp_utc"].endswith("+00:00")
     assert rows.loc[0, "text"] == "看多"
     assert rows.loc[0, "likes"] == 3
+    assert rows.loc[0, "views"] == 1200
+    assert pd.isna(rows.loc[0, "author_followers"])
+
+
+def test_normalize_social_cli_writes_canonical_csv(tmp_path):
+    raw_path = tmp_path / "raw.json"
+    raw_path.write_text('[{"created_at":"2026-10-01T08:30:00Z","own_text":"positive"}]', encoding="utf-8")
+    out_path = tmp_path / "normalized.csv"
+    assert main([
+        "normalize-social", "--raw", str(raw_path), "--source", "LIHKG",
+        "--ticker", "0700.HK", "--out", str(out_path),
+    ]) == 0
+    posts = pd.read_csv(out_path)
+    assert posts.loc[0, "ticker"] == "0700.HK"
+    assert posts.loc[0, "source"] == "LIHKG"
+    assert posts.loc[0, "text"] == "positive"
 
 
 def test_exa_requires_free_only_confirmation_before_any_request():
@@ -105,3 +123,44 @@ def test_walk_forward_evaluator_returns_fold_predictions():
     assert len(predictions) > 0
     assert predictions["predicted_close"].notna().all()
     assert (metrics["n_test"] > 0).all()
+
+
+def test_folds_purge_rows_whose_target_reaches_test_start():
+    rows = []
+    for day in range(1, 13):
+        rows.append({"ticker": "A", "date": f"2026-01-{day:02d}",
+                     "next_date": f"2026-01-{day + 1:02d}"})
+    for train, test in chronological_folds(pd.DataFrame(rows), n_splits=3):
+        assert train["next_date"].max() < test["date"].min()
+
+
+def test_forecast_latest_rejects_labeled_latest_and_uses_only_prior_history():
+    rows = []
+    for day in range(1, 6):
+        row = {feature: 0.0 for feature in MODEL_FEATURES}
+        row.update({"ticker": "A", "date": f"2026-01-{day:02d}", "close": 100 + day,
+                    "target_return": 0.01 if day < 5 else np.nan})
+        rows.append(row)
+    forecast = forecast_latest(pd.DataFrame(rows))
+    assert forecast.loc[0, "date"] == "2026-01-05"
+    rows[-1]["target_return"] = 0.01
+    with pytest.raises(ValueError, match="in-sample"):
+        forecast_latest(pd.DataFrame(rows))
+
+
+def test_duplicate_posts_are_counted_once_and_missing_telemetry_is_not_observed_zero():
+    posts = pd.DataFrame([
+        {"ticker": "A", "source": "x", "post_id": "p1", "timestamp_utc": "2026-01-01T00:00:00Z", "text": "bullish"},
+        {"ticker": "A", "source": "x", "post_id": "p1", "timestamp_utc": "2026-01-01T00:00:00Z", "text": "bullish"},
+    ])
+    grouped = aggregate_posts(posts, "UTC", "23:59")
+    assert grouped.loc[0, "post_count"] == 1
+    assert grouped.loc[0, "engagement_observed"] == 0
+    assert grouped.loc[0, "followers_observed"] == 0
+    assert "engagement_log" not in MODEL_FEATURES
+
+
+def test_naive_event_timestamps_are_rejected():
+    posts = pd.DataFrame([{"ticker": "A", "timestamp_utc": "2026-01-01 00:00:00", "text": "bullish"}])
+    with pytest.raises(ValueError, match="explicit source timezone"):
+        aggregate_posts(posts, "UTC", "23:59")

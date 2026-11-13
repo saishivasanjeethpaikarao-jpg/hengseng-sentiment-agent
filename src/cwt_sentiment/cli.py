@@ -105,8 +105,8 @@ def main(argv: list[str] | None = None) -> int:
         mapping = json.loads(Path(args.field_map).read_text(encoding="utf-8")) if args.field_map else None
         result = normalize_social_rows(raw, args.source, args.ticker, mapping)
         _parent(args.out)
-        Path(args.out).write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
-        print(f"Saved {len(result)} raw actor records to {args.out}; run charge cap: ${args.max_total_charge_usd:.2f}.")
+        result.to_csv(args.out, index=False)
+        print(f"Saved {len(result)} normalized social posts to {args.out}.")
     elif args.command == "exa-pull":
         if not args.confirm_exa_free_balance_and_auto_recharge_off:
             raise SystemExit(

@@ -11,3 +11,5 @@ data/normalized/
 data/features/
 reports/*.csv
 reports/*.html
+reports/real_run/
+ARTIFACT_MANIFEST.sha256

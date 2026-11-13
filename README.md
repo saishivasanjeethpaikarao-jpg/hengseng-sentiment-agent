@@ -1,86 +1,76 @@
-# HKEX + KRX Sentiment-to-Price Starter
+# HKEX + KRX sentiment-to-price research prototype
 
-A reproducible Python scaffold for the assignment: source adapters, multilingual baseline sentiment, exchange-local event alignment, next-session targets, chronological validation, and an HTML ticker report. It is not a completed live run: no social dataset, Exa results, forecasts, or model-performance claims are included.
+A Python project for five Hong Kong and five Korean stocks: public social collection, headline news, daily prices, exchange-local feature alignment, next-session returns, purged chronological validation, provisional forecasts, and a visual report.
 
-## Assignment requirements
+**This is a working free-route prototype, not a claim of full assignment compliance.** The assignment names Apify and Exa. No Apify Actor was run and no Exa query was made in this zero-dollar implementation. Local public collection and Google News RSS are documented substitutes. Source coverage is bounded and uneven; the actual coverage table—not the existence of an adapter—determines what was collected.
 
-Choose five assets on HKEX and five on KRX; collect the latest 10 days of social posts from at least two listed sources per exchange; gather related news using Exa; align posts and news with market sessions; report sentiment, direction, position cues, and support/resistance mentions; then forecast the next session and validate chronologically out of sample. The assignment requests a repository link and provider/actor details, not API tokens in a public repository.
+Start with **[RUN_RESULTS.md](RUN_RESULTS.md)** for actual counts, metrics and gaps, **[LEARNING_GUIDE.md](LEARNING_GUIDE.md)** to understand and explain the code, and **[IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)** for the original 5–7 day work plan. [DATA_ACCESS.md](DATA_ACCESS.md) explains source boundaries.
 
-## Source candidates and current access status
+## What is implemented
 
-The tentative Hong Kong pair is **LIHKG + Moomoo Community**. LIHKG's public category listing links to a finance section, but asset-keyword retrieval has not been tested. Moomoo's public ticker page displays ticker-tagged posts through a rendered-page extraction; a direct HTTP request returned only a generic empty app document, so a browser-based collector still needs testing. Neither source has a verified Apify Actor ID.
+- Public Moomoo linked-post collection with structured publication timestamps; invalid source timestamps are rejected rather than guessed.
+- Public LIHKG keyword search, newest-first finance-category title samples. Title-only records are marked as such; they are not complete reply threads.
+- Naver’s observed public per-stock discussion feed with cursor pagination and news-item exclusion.
+- Daum’s browser-observed debates feed, with collection success/failure recorded per ticker.
+- Google News RSS headline-only collection as an **Exa substitute**.
+- About two years of Yahoo daily bars and separately timestamped latest quote snapshots. Null source daily closes are not silently invented or forward-filled.
+- Deduplication, explicit timezone validation, local cutoff/session alignment, multilingual keyword sentiment, next-session log-return labels.
+- A price-only long-history benchmark, plus a guarded tiny sentiment experiment only where historical social coverage permits one. Four purged expanding folds keep dates together; preprocessing is fit on training folds only.
+- CSV metrics/predictions/coverage/evidence and a self-contained HTML dashboard.
 
-The tentative Korea pair is **Naver Finance discussions + Daum Finance talks**. Naver's public hot feed contains stock-tagged posts, but its per-stock page is client-loaded and a stable ticker-feed endpoint has not been verified. Daum's public per-stock talks page exposes posts, but the page is dynamic and still needs a tested collector. Source details and links are in `RESEARCH_NOTES.md` and `DATA_ACCESS.md`.
+No claim of a profitable strategy or validated sentiment edge is made.
 
-These are assignment-listed candidates, not proven collectors. Do not claim source coverage until an actual, free-only test returns relevant records with timestamps. The generic Apify client is a runner, not a source scraper; `config/apify_input.json` is a custom-Actor template and is not valid input for a third-party actor.
+## Run the downloaded data package offline
 
-## Free-only safeguards
-
-Apify's published Free plan is $0/month with $5 in monthly platform-usage credits; no account-specific balance or billing status is included here. No third-party Store Actor, Actor build/run, paid proxy, or social scrape has been used. Custom Actor runs consume the Free plan's monthly usage credits, so recheck the remaining allowance in the account dashboard before any run; never use a paid Actor or paid proxy. The Apify CLI's `--max-total-charge-usd` defaults to `$0.00`, which blocks billable runs unless a deliberate cap is provided.
-
-Exa has not been called. Its Free tier and optional auto-recharge depend on the user's account settings; this project cannot verify the remaining balance or recharge setting using the supplied standard API key. The `exa-pull` command is now blocked unless the operator explicitly confirms in the Exa dashboard that free credits remain and auto-recharge is off. Never pass that confirmation flag otherwise.
-
-## Quick start
+The full downloadable project includes normalised data and generated reports. The public Git repository deliberately excludes collected text, raw pages, quote datasets and row-level reports.
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate       # Windows: .venv\Scripts\activate
-pip install -e '.[dev,prices]'
-cp .env.example .env            # add credentials locally; never commit .env
-pytest
+source .venv/bin/activate          # Windows PowerShell: .\.venv\Scripts\Activate.ps1
+python -m pip install -e '.[dev,public]'
+pytest -q
+python scripts/run_real_pipeline.py
 ```
 
-Run `cwt-sentiment --help` to see commands and options.
+Open `reports/real_run/dashboard.html`. The analysis script makes **no network calls**. A code-only clone needs the normalised data from the data package before this command can run.
 
-### Social collection
+## Recollect using public free routes
 
-Only use a source-specific Actor after its public-source access, input/output schema, and zero-cost path are confirmed. The generic runner retains raw output and has a `$0.00` charge cap by default:
+These commands make public network requests, not Apify or Exa calls. Source availability and page schemas can change. Review the scripts and status files; do not bypass access controls or use paid proxies.
 
 ```bash
-cwt-sentiment apify-pull --actor-id 'owner~your-custom-actor' --input config/apify_input.json --out data/raw/source.json
-cwt-sentiment normalize-social --raw data/raw/source.json --source LIHKG --ticker 0700.HK --out data/normalized/lihkg_0700.csv
+python scripts/collect_prices_public.py
+python scripts/collect_quotes_public.py
+python scripts/collect_news_public.py
+python scripts/collect_kr_feeds.py
+python scripts/collect_daum_public.py
+python scripts/collect_hk_public.py
+python scripts/run_real_pipeline.py
 ```
 
-The example input is not runnable until a custom Actor implementing that template exists. A positive Apify run cap may consume included Free-plan credits; only use one after checking the account still has enough free allowance and confirming no paid Actor/proxy is involved.
+The Hong Kong collector needs Playwright Chromium. Install a local browser with `python -m playwright install chromium` if no supported system Chromium is present. Each collector saves provenance/status, retains only actual timestamps inside the requested window, and records its sampling cap. Re-running is not proof of exhaustive ten-day coverage.
 
-### Exa news
+## Key data schemas
 
-The connector is included, but the project refuses to call it without this explicit dashboard check:
+| Table | Required fields |
+|---|---|
+| Social | `ticker, source, timestamp_utc, text` |
+| News | `ticker, published_at_utc, title` |
+| Daily prices | `ticker, date, close` |
+| Latest quotes | `ticker, quote_timestamp_utc, quote_date_local, price` |
 
-```bash
-cwt-sentiment exa-pull --assets config/assets.csv --market HKEX --days 10 --out data/normalized/hk_news.csv \
-  --confirm-exa-free-balance-and-auto-recharge-off
-```
+Optional social fields include `post_id,url,likes,reposts,views,author_followers,record_type,retrieved_at_utc`. Missing telemetry is not observed zero. Coverage/status files distinguish retained samples from failed or empty collections.
 
-Use the flag only after confirming both conditions in Exa's dashboard. If the account status is uncertain, leave the step disabled.
+## Modeling rules worth checking
 
-### Optional daily prices
+The target is `log(close[t+1] / close[t])`, where `t+1` is the next supplied trading session, not tomorrow’s calendar date. Events after a local cutoff roll to the next supplied session. HKEX uses `Asia/Hong_Kong`; KRX uses `Asia/Seoul`. The example cutoff/calendar choices need official verification before production use.
 
-The assignment does not specify a price provider. The starter includes an optional Yahoo Finance adapter; check availability and terms or replace it with an approved provider. For useful validation, collect 6–12 months of daily bars; the 10-day social window is not enough by itself.
+Training target dates must end strictly before the first test feature date. Latest-row forecasts must be unlabeled; an in-sample row is refused. Cumulative likes/views/followers and engagement-weighted sentiment are excluded from retrospective model predictors because their historical as-of values are unknown. The long-history result is **price-only**: two years of prices cannot substitute for two years of social observations.
 
-```bash
-cwt-sentiment prices-pull --assets config/assets.csv --market HKEX --period 1y --out data/normalized/hk_prices.csv
-```
+The small keyword scorer does not reliably understand negation, slang, sarcasm or multilingual finance context. Support/resistance and position fields are unverified community wording cues, with reviewable evidence—not technical advice or actual portfolio holdings. Yahoo prices are third-party data, not certified official exchange closes; raw unadjusted prices may also need corporate-action checks.
 
-### Build, evaluate, forecast, and report
+## Optional API adapters—not used in this run
 
-Run separately for each market so its timezone and prediction cutoff are correct:
+`cwt-sentiment --help` exposes `apify-pull`, `normalize-social`, `exa-pull`, `prices-pull`, `build`, `evaluate`, `forecast` and `report`. The generic Apify runner is not a source scraper, and a null Actor ID must not be invented. The Exa adapter requires an explicit free-balance/recharge confirmation; an API key or flag alone does not establish that a request is free. Do not run either provider under this project’s zero-dollar restriction without a verified no-charge route.
 
-```bash
-cwt-sentiment build --posts data/normalized/hk_posts.csv --news data/normalized/hk_news.csv --prices data/normalized/hk_prices.csv --timezone Asia/Hong_Kong --cutoff 16:10 --out data/features/hk.csv
-cwt-sentiment evaluate --features data/features/hk.csv --splits 4 --metrics-out reports/hk_metrics.csv --predictions-out reports/hk_predictions.csv
-cwt-sentiment forecast --features data/features/hk.csv --out reports/hk_forecast.csv
-cwt-sentiment report --posts data/normalized/hk_posts.csv --prices data/normalized/hk_prices.csv --assets config/assets.csv --market HKEX --timezone Asia/Hong_Kong --out reports/hk.html
-```
-
-For Korea, use `Asia/Seoul` and a confirmed cutoff. The target is the next available session's log return, `log(close[t+1] / close[t])`; expanding chronological folds split by date, so all assets from a date stay together. A zero-return benchmark is included; no random shuffle is used.
-
-## Canonical schemas
-
-Social rows use `ticker,source,timestamp_utc,text` and optionally `likes,reposts,views,author_followers,post_id,url`. News rows use `ticker,published_at_utc,title` and optionally `text,url,source`. Price rows use `ticker,date,close` and optionally `open,high,low,volume,currency,data_source`. Timestamps should be stored in UTC ISO-8601 form; price dates should be exchange-local trading dates.
-
-## Limits and safety
-
-Events after the configured local cutoff and events on non-trading dates roll to the next available supplied market session. Use an official exchange calendar for production. The baseline keyword scorer is a demonstrator, not a validated Cantonese/Korean finance model; label a sample from each source/language before reporting conclusions. Position, support, and resistance phrases are noisy community claims, not investment advice. Missing follower counts must remain missing rather than be invented.
-
-Keep `.env`, API keys, raw data, and private/closed-group content out of Git. Do not email API tokens in ordinary email; share them only through the recipient's approved secure process. The assignment repository is public by the user's choice, so include code and templates only.
+Keep API keys and `.env` out of Git. No credentials, account-specific billing details or collected public-user text are needed in the public repository. Data/report files remain in the private deliverable package.

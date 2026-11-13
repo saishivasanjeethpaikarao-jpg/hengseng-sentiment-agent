@@ -6,24 +6,20 @@
       "candidate_sources": [
         {
           "name": "LIHKG",
-          "platform": "LIHKG",
           "source_page": "https://lihkg.com/category/15?order=now",
+          "search_page_template": "https://lihkg.com/search?q={keyword}&sort=desc_create_time&type=thread",
+          "observed_public_endpoint": "https://lihkg.com/api_v2/thread/search",
           "apify_actor_id": null,
-          "collector_status": "public finance category link observed; ticker-level search and post fields unverified",
-          "collection_candidate": "custom public-page actor; no paid store actor"
+          "collector_script": "scripts/collect_hk_public.py",
+          "collector_status": "observed public search; bounded finance thread-title sample, not full replies; see actual status JSON"
         },
         {
-          "name": "Moomoo_Community",
-          "platform": "Futu/Moomoo Community",
+          "name": "Moomoo",
           "source_page_template": "https://www.moomoo.com/stock/{zero_padded_code}-HK/community",
           "apify_actor_id": null,
-          "collector_status": "rendered public extraction shows ticker posts; direct HTTP returns empty app document; browser path unverified",
-          "collection_candidate": "custom browser actor only if it works without a paid proxy"
+          "collector_script": "scripts/collect_hk_public.py",
+          "collector_status": "browser stock page plus linked public post HTML; structured publication timestamps; malformed dates rejected; bounded sample"
         }
-      ],
-      "fallback_notes": [
-        "AAStocks tested forum route returned page-not-found; ETNet tested quote page did not show user-post discussions.",
-        "A public Telegram finance channel was readable but was not verified for five-HK-ticker coverage."
       ]
     },
     "KRX": {
@@ -31,35 +27,44 @@
       "prediction_cutoff_local": "15:40",
       "candidate_sources": [
         {
-          "name": "Naver_Finance_Stock_Discussion",
-          "platform": "Naver Finance",
-          "hot_feed": "https://m.stock.naver.com/discussion/home/hot",
+          "name": "Naver Finance",
           "source_page_template": "https://m.stock.naver.com/domestic/stock/{six_digit_code}/discussion",
+          "observed_public_endpoint": "https://m.stock.naver.com/front-api/discussion/list",
           "apify_actor_id": null,
-          "collector_status": "public hot feed verified; unauthenticated per-ticker post-feed endpoint unverified",
-          "collection_candidate": "custom browser actor or verified public endpoint"
+          "collector_script": "scripts/collect_kr_feeds.py",
+          "collector_status": "actual public per-stock feed with lastOffset cursor; isNews excluded; bounded pagination"
         },
         {
-          "name": "Daum_Finance_Forum",
-          "platform": "Daum Finance",
+          "name": "Daum Finance",
           "source_page_template": "https://m.finance.daum.net/quotes/A{six_digit_code}/talks",
+          "observed_public_endpoint_template": "https://m.finance.daum.net/api/home/daum?path=/content/debates/A{six_digit_code}?page=1&perPage=30&notice=true",
           "apify_actor_id": null,
-          "collector_status": "public per-stock talks page verified; repeatable collector not yet tested",
-          "collection_candidate": "custom public-page/browser actor"
+          "collector_script": "scripts/collect_daum_public.py",
+          "collector_status": "actual debates feed observed in public browser; consult daum_collection_status.json for collected ticker results"
         }
       ]
     }
+  },
+  "news": {
+    "zero_cost_run_provider": "Google News RSS, headline-only Exa substitute",
+    "exa_used_in_zero_cost_run": false
+  },
+  "prices": {
+    "provider": "Yahoo Finance chart endpoint",
+    "daily_bars_and_latest_quotes_stored_separately": true,
+    "null_daily_close_is_not_silently_forward_filled": true
   },
   "safety": {
     "max_external_spend_usd": 0,
     "paid_store_actors_allowed": false,
     "paid_proxies_allowed": false,
-    "exa_enabled_only_after_free_balance_and_auto_recharge_off_confirmation": true,
+    "apify_actor_run_in_zero_cost_collection": false,
     "actor_ids_are_null_until_actually_created_and_tested": true
   },
   "notes": [
-    "Candidate sources are all from the assignment's approved list; candidate status does not prove end-to-end access.",
-    "The example time cutoffs must be confirmed against official market calendars and the intended prediction time.",
-    "The optional Yahoo Finance price adapter is not an assignment-specified provider; replace it if the reviewer requires another provider."
+    "All local source collectors are substitutes for Apify execution, not evidence of Actor runs.",
+    "Source status files and row-level record_type fields take precedence over candidate labels.",
+    "Bounded latest-post samples do not prove exhaustive ten-day coverage.",
+    "Example cutoffs and future session dates need official calendar verification before production use."
   ]
 }
