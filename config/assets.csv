@@ -1,0 +1,11 @@
+market,exchange,ticker,asset_name,currency
+HKEX,HKEX,0700.HK,Tencent Holdings,HKD
+HKEX,HKEX,9988.HK,Alibaba Group,HKD
+HKEX,HKEX,0005.HK,HSBC Holdings,HKD
+HKEX,HKEX,3690.HK,Meituan,HKD
+HKEX,HKEX,1299.HK,AIA Group,HKD
+KRX,KRX,005930.KS,Samsung Electronics,KRW
+KRX,KRX,000660.KS,SK hynix,KRW
+KRX,KRX,035420.KS,Naver Corporation,KRW
+KRX,KRX,035720.KS,Kakao Corporation,KRW
+KRX,KRX,005380.KS,Hyundai Motor,KRW

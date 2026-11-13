@@ -1,0 +1,9 @@
+{
+  "mode": "search",
+  "keywords": ["0700.HK", "Tencent Holdings"],
+  "order": "desc_reply_time",
+  "dateFrom": "10d",
+  "maxItems": 100,
+  "aiLabels": false,
+  "note": "Example schema for the candidate Apify LIHKG actor only. Confirm its current actor ID, price, terms, and input schema before running. The default CLI charge cap is $0.00, so a paid run will be blocked unless an explicit budget is supplied."
+}

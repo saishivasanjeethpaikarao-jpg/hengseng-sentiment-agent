@@ -1,0 +1,26 @@
+{
+  "markets": {
+    "HKEX": {
+      "timezone": "Asia/Hong_Kong",
+      "prediction_cutoff_local": "16:10",
+      "candidate_sources": [
+        {"name": "LIHKG", "apify_actor_id": "SET_AFTER_VERIFICATION"},
+        {"name": "AAStocks_ETNet", "apify_actor_id": "SET_AFTER_VERIFICATION"}
+      ]
+    },
+    "KRX": {
+      "timezone": "Asia/Seoul",
+      "prediction_cutoff_local": "15:40",
+      "candidate_sources": [
+        {"name": "Naver_Finance_Stock_Discussion", "apify_actor_id": "SET_AFTER_VERIFICATION"},
+        {"name": "Daum_Finance_Forum", "apify_actor_id": "SET_AFTER_VERIFICATION"}
+      ]
+    }
+  },
+  "notes": [
+    "All four sources are explicitly listed in the assignment. Candidate source names do not prove a working Apify actor exists.",
+    "Verify each actor's input/output schema, source permissions, version, and exact per-run price before collection.",
+    "Example timezone cutoffs must be checked against the official exchange calendar and intended prediction time.",
+    "The optional Yahoo Finance price adapter is not an assignment-specified provider; replace it if the reviewer requires another licensed source."
+  ]
+}
