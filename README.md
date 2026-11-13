@@ -1,42 +1,79 @@
 # HKEX + KRX sentiment-to-price research prototype
 
-A Python project for five Hong Kong and five Korean stocks: public social collection, headline news, daily prices, exchange-local feature alignment, next-session returns, purged chronological validation, provisional forecasts, and a visual report.
+A beginner-friendly Python research project exploring whether public investor discussion adds information for **next-session returns** across five Hong Kong and five Korean stocks. The deliverable emphasizes reproducible data handling, time-aware validation, a simple baseline, and honest limits—not a claim of a winning strategy.
 
-**This is a working free-route prototype, not a claim of full assignment compliance.** The assignment names Apify and Exa. No Apify Actor was run and no Exa query was made in this zero-dollar implementation. Local public collection and Google News RSS are documented substitutes. Source coverage is bounded and uneven; the actual coverage table—not the existence of an adapter—determines what was collected.
+**Current state:** the tested prototype and real-data analysis run end-to-end on public/free-route substitutes. It is **not fully assignment-compliant yet**: no Apify Actor or Exa search was run under the strict $0 constraint. Do not confuse code adapters with provider usage.
 
-Start with **[RUN_RESULTS.md](RUN_RESULTS.md)** for actual counts, metrics and gaps, **[LEARNING_GUIDE.md](LEARNING_GUIDE.md)** to understand and explain the code, and **[IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md)** for the original 5–7 day work plan. [DATA_ACCESS.md](DATA_ACCESS.md) explains source boundaries.
+> **Fast start:** read [the real run results](RUN_RESULTS.md), download [the interactive study pack](INTERVIEW_STUDY_PACK.html) and open it in a local browser (GitHub does not execute repository HTML), or skim the [interview cheat sheet](INTERVIEW_CHEATSHEET.md).
 
-## What is implemented
+## What the real run found
 
-- Public Moomoo linked-post collection with structured publication timestamps; invalid source timestamps are rejected rather than guessed.
-- Public LIHKG keyword search, newest-first finance-category title samples. Title-only records are marked as such; they are not complete reply threads.
-- Naver’s observed public per-stock discussion feed with cursor pagination and news-item exclusion.
-- Daum’s browser-observed debates feed, with collection success/failure recorded per ticker.
-- Google News RSS headline-only collection as an **Exa substitute**.
-- About two years of Yahoo daily bars and separately timestamped latest quote snapshots. Null source daily closes are not silently invented or forward-filled.
-- Deduplication, explicit timezone validation, local cutoff/session alignment, multilingual keyword sentiment, next-session log-return labels.
-- A price-only long-history benchmark, plus a guarded tiny sentiment experiment only where historical social coverage permits one. Four purged expanding folds keep dates together; preprocessing is fit on training folds only.
-- CSV metrics/predictions/coverage/evidence and a self-contained HTML dashboard.
+The long price-only Ridge model was slightly worse than predicting a zero return in both markets. The tiny sentiment experiments had only three test dates per market and also lost to the no-change baseline. **No predictive edge or profitability is established.**
 
-No claim of a profitable strategy or validated sentiment edge is made.
+| Evaluation | Ridge MAE | Zero-return MAE | Test size |
+|---|---:|---:|---:|
+| HKEX price-only | 1.639% | **1.627%** | 1,940 predictions across 388 dates |
+| KRX price-only | 2.707% | **2.695%** | 1,900 predictions across 380 dates |
+| HKEX sentiment experiment | 4.563% | **1.927%** | 15 rows across 3 dates |
+| KRX sentiment experiment | 4.502% | **2.581%** | 15 rows across 3 dates |
 
-## Run the downloaded data package offline
+Lower mean absolute log-return error (MAE) is better. The long-history test validates price features only; it is not evidence of a long-history social-sentiment backtest.
 
-The full downloadable project includes normalised data and generated reports. The public Git repository deliberately excludes collected text, raw pages, quote datasets and row-level reports.
+![Actual model errors and per-source social coverage from the frozen run](docs/real-data-evaluation.png)
 
-```bash
-python -m venv .venv
-source .venv/bin/activate          # Windows PowerShell: .\.venv\Scripts\Activate.ps1
-python -m pip install -e '.[dev,public]'
-pytest -q
-python scripts/run_real_pipeline.py
+*Social counts are bounded collected records, not the total activity on a site. A zero count means no records were retained—not proof that no discussion exists.*
+
+## How the project works
+
+```mermaid
+flowchart LR
+    A[Public sources<br/>social · RSS · prices] --> B[Raw response<br/>and collection status]
+    B --> C[Canonical events<br/>UTC · IDs · missing values]
+    C --> D[Daily features<br/>local cutoff · next session]
+    D --> E[Chronological tests<br/>purged Ridge vs zero]
+    E --> F[Metrics, coverage<br/>and caveats]
 ```
 
-Open `reports/real_run/dashboard.html`. The analysis script makes **no network calls**. A code-only clone needs the normalised data from the data package before this command can run.
+The event timestamp is converted from UTC to the exchange timezone before cutoff alignment. The target is `log(close[t+1] / close[t])`, where `t+1` is the next supplied trading session—not the next calendar day.
 
-## Recollect using public free routes
+```mermaid
+flowchart LR
+    T[Earlier dates] --> P[Fit imputer, scaler and model on train only]
+    P --> G[One target step purged at boundary]
+    G --> V[Later dates held out; all tickers on a date stay together]
+    V --> C[Compare MAE against predicting zero return]
+```
 
-These commands make public network requests, not Apify or Exa calls. Source availability and page schemas can change. Review the scripts and status files; do not bypass access controls or use paid proxies.
+This split reduces look-ahead leakage. A fixed Ridge model is used as a transparent baseline, and preprocessing is fit inside each training fold. Missing social telemetry is not converted into observed zero; retrospective cumulative engagement is excluded where historic as-of values are unavailable.
+
+## Data snapshot and known gaps
+
+| Data | Run count | Important caveat |
+|---|---:|---|
+| Social discussion | 1,499 rows | 1,475 Korea; only 24 Hong Kong; bounded samples |
+| News | 110 headlines | RSS substitute; no Exa query |
+| Daily bars | 4,875 rows | Third-party Yahoo data, not certified exchange closes |
+| Latest quote snapshots | 10 | Not the same as a verified daily close; forecasts are provisional |
+| Author followers | 0 observed | Missing for all 1,499 rows; do not treat as zero |
+
+Korean records are heavily uneven by source and ticker. In Hong Kong, Moomoo provided 24 retained posts, LIHKG retained zero, and AIA has no retained social sample. Naïve Naver/Daum timestamps are interpreted as Seoul local; source-clock accuracy is not independently certified. The example cutoff/calendar choices still need authoritative exchange-calendar verification.
+
+## Run it
+
+Python 3.10+ is recommended. This repository is **code-only**: it intentionally excludes raw pages, post text, credentials, and row-level results. For the already-collected data and dashboard, use the separate full project package. To reproduce from a clean clone, run the free public collectors first; site behavior and availability can change.
+
+```bash
+git clone https://github.com/saishivasanjeethpaikarao-jpg/hengseng-sentiment-agent.git
+cd hengseng-sentiment-agent
+python -m venv .venv
+# macOS/Linux
+source .venv/bin/activate
+# Windows PowerShell: .\.venv\Scripts\Activate.ps1
+python -m pip install -e ".[dev,public]"
+pytest -q
+```
+
+To recollect bounded public samples and then rebuild the offline report:
 
 ```bash
 python scripts/collect_prices_public.py
@@ -48,29 +85,27 @@ python scripts/collect_hk_public.py
 python scripts/run_real_pipeline.py
 ```
 
-The Hong Kong collector needs Playwright Chromium. Install a local browser with `python -m playwright install chromium` if no supported system Chromium is present. Each collector saves provenance/status, retains only actual timestamps inside the requested window, and records its sampling cap. Re-running is not proof of exhaustive ten-day coverage.
+The HK public collector needs Playwright Chromium (install with `python -m playwright install chromium` if a supported system browser is unavailable). Collection uses no Apify/Exa key and no paid proxy. Read collector status outputs and the source limits before interpreting a sample as complete. `run_real_pipeline.py` itself is offline and makes no network calls. A full command reference and schemas are in [DATA_ACCESS.md](DATA_ACCESS.md) and [the learning guide](LEARNING_GUIDE.md).
 
-## Key data schemas
+## Repository map
 
-| Table | Required fields |
+| Path | Purpose |
 |---|---|
-| Social | `ticker, source, timestamp_utc, text` |
-| News | `ticker, published_at_utc, title` |
-| Daily prices | `ticker, date, close` |
-| Latest quotes | `ticker, quote_timestamp_utc, quote_date_local, price` |
+| `config/assets.csv` | Example asset universe |
+| `scripts/collect_*public.py` | Public, bounded collection scripts |
+| `src/cwt_sentiment/features.py` | Timezone/session features and next-session targets |
+| `src/cwt_sentiment/model.py` | Expanding chronological evaluation and forecasts |
+| `scripts/run_real_pipeline.py` | Frozen offline evaluation and reports |
+| `tests/` | Regression tests for time alignment, data quality and leakage guards |
+| `INTERVIEW_STUDY_PACK.html` | Offline interactive study page with flowcharts, results charts, Q&A and quiz |
+| `INTERVIEW_CHEATSHEET.md` | Quick interview-day revision sheet |
 
-Optional social fields include `post_id,url,likes,reposts,views,author_followers,record_type,retrieved_at_utc`. Missing telemetry is not observed zero. Coverage/status files distinguish retained samples from failed or empty collections.
+## Interview-ready explanation
 
-## Modeling rules worth checking
+> “I built a reproducible research prototype, but the simple Ridge model did not beat the zero-return baseline. I would not claim an edge: the sentiment test is too small, and Hong Kong social coverage is weak. I can explain the data alignment and leakage guards, and my next step is to satisfy the named provider requirements through a verified no-charge path, then collect better as-of coverage and rerun the same frozen test.”
 
-The target is `log(close[t+1] / close[t])`, where `t+1` is the next supplied trading session, not tomorrow’s calendar date. Events after a local cutoff roll to the next supplied session. HKEX uses `Asia/Hong_Kong`; KRX uses `Asia/Seoul`. The example cutoff/calendar choices need official verification before production use.
+See [RUN_RESULTS.md](RUN_RESULTS.md) for detailed metrics and caveats, [LEARNING_GUIDE.md](LEARNING_GUIDE.md) for the code walkthrough, [IMPLEMENTATION_PLAN.md](IMPLEMENTATION_PLAN.md) for a practical 5–7 day plan, and [DATA_ACCESS.md](DATA_ACCESS.md) for source-status details.
 
-Training target dates must end strictly before the first test feature date. Latest-row forecasts must be unlabeled; an in-sample row is refused. Cumulative likes/views/followers and engagement-weighted sentiment are excluded from retrospective model predictors because their historical as-of values are unknown. The long-history result is **price-only**: two years of prices cannot substitute for two years of social observations.
+## Safety and scope
 
-The small keyword scorer does not reliably understand negation, slang, sarcasm or multilingual finance context. Support/resistance and position fields are unverified community wording cues, with reviewable evidence—not technical advice or actual portfolio holdings. Yahoo prices are third-party data, not certified official exchange closes; raw unadjusted prices may also need corporate-action checks.
-
-## Optional API adapters—not used in this run
-
-`cwt-sentiment --help` exposes `apify-pull`, `normalize-social`, `exa-pull`, `prices-pull`, `build`, `evaluate`, `forecast` and `report`. The generic Apify runner is not a source scraper, and a null Actor ID must not be invented. The Exa adapter requires an explicit free-balance/recharge confirmation; an API key or flag alone does not establish that a request is free. Do not run either provider under this project’s zero-dollar restriction without a verified no-charge route.
-
-Keep API keys and `.env` out of Git. No credentials, account-specific billing details or collected public-user text are needed in the public repository. Data/report files remain in the private deliverable package.
+This is an academic research prototype, not investment advice. No claim of return, accuracy, or internship outcome is guaranteed. No credentials or individual social-post text are stored in this public repository. Keep `.env` private. The Apify and Exa adapters are not enabled by default; do not use them unless the service can be verified to remain within the $0 requirement.
