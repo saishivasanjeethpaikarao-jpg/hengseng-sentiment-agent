@@ -59,7 +59,7 @@ This is **not** a finance-trained language model, investment recommendation, or 
 ## How the code works
 
 ```mermaid
-flowchart LR
+flowchart TD
     A["Public pages, RSS and price routes"] --> B["Bounded collectors + source status"]
     B --> C["Canonical records<br/>UTC events · IDs · missingness"]
     C --> D["Exchange-local time<br/>cutoff + supplied sessions"]
@@ -96,7 +96,7 @@ Missing source coverage is not evidence of neutral opinion. The data retains obs
 ### 4. Validate in time order
 
 ```mermaid
-flowchart LR
+flowchart TD
     A["Earlier dates"] --> B["Fit imputer, scaler and Ridge on training dates"]
     B --> C["Purge training rows whose next-date reaches test start"]
     C --> D["Evaluate later dates<br/>all tickers for a date stay together"]
@@ -193,11 +193,20 @@ The Hong Kong browser collector may require Chromium: `python -m playwright inst
 
 The public collectors can produce a different sample on a later date. Exact reproduction of the frozen numbers requires the exact frozen input data, which is not included in this public repository. See [DATA_ACCESS.md](DATA_ACCESS.md) for schemas and [LEARNING_GUIDE.md](LEARNING_GUIDE.md) for a longer practice walkthrough.
 
-## A concise interview explanation
+## How to describe the project in an interview
 
-> “This project tests whether public investor discussion adds information for the next-session return of five Hong Kong and five Korean stocks. The pipeline normalizes public records, aligns timestamps to exchange-local cutoffs, builds daily features, and evaluates Ridge against a zero-return baseline using chronological splits with a one-session purge. The long-history test is price-only, and the sentiment pilot has only three test dates per market. The zero-return baseline performed better, so I do not claim a predictive edge. Under a strict zero-spend limit, I documented public-source and RSS substitutes rather than claiming Apify or Exa usage.”
+> “I built a Python pipeline to test whether public investor discussion adds value to next-session forecasts across five Hong Kong and five Korean stocks. It aligns events to exchange cutoffs and evaluates Ridge with four expanding date-based folds and a one-session purge. In the long price-only tests, no-change was slightly better: HKEX MAE was 1.627% versus 1.639%, and KRX was 2.695% versus 2.707%. That result sets my next step: improve the social history and test a larger sentiment sample under the same protocol.”
 
-Be ready to explain the code you personally understand and have tested; do not claim an Actor, Exa query, long-history sentiment backtest, or profitable strategy that this run does not support. It is appropriate to credit coding assistance and then walk through the parts you can defend.
+**Walkthrough:** trace one event from timestamp and cutoff, through the next-session label and purge, to the baseline comparison. The flowcharts above show that path.
+
+## Limitations and provider status
+
+- **Provider compliance:** external data-provider spend was $0. No Apify Actor or Exa request was made; bounded public collectors and Google News RSS were substitutes, so the named-provider requirement remains unmet.
+- **Coverage:** the run retained 1,499 social records overall but only 24 Hong Kong Moomoo records, no LIHKG records, and no AIA social sample. Korean coverage is uneven and the collections are bounded—not complete historical archives.
+- **Evidence:** the long-history evaluation is price-only, and the zero-return baseline slightly beat Ridge in both markets. The sentiment pilot has only three held-out dates per market; it does not establish a sentiment edge or profitable strategy.
+- **Market data and timing:** Yahoo bars are not certified exchange closes. All 10 latest daily-close fields were missing, so separate quote snapshots are provisional. Source clocks, local cutoffs, and exchange calendars still need verification.
+
+Detailed source and evaluation notes are in [DATA_ACCESS.md](DATA_ACCESS.md) and [RUN_RESULTS.md](RUN_RESULTS.md). Be direct about these limits if asked; don't lead with them instead of explaining the engineering work.
 
 ## Suggested next steps
 
