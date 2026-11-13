@@ -1,9 +1,34 @@
 {
-  "mode": "search",
-  "keywords": ["0700.HK", "Tencent Holdings"],
-  "order": "desc_reply_time",
-  "dateFrom": "10d",
-  "maxItems": 100,
-  "aiLabels": false,
-  "note": "Example schema for the candidate Apify LIHKG actor only. Confirm its current actor ID, price, terms, and input schema before running. The default CLI charge cap is $0.00, so a paid run will be blocked unless an explicit budget is supplied."
+  "template_only": true,
+  "collector_name": "cwt-public-finance-sources",
+  "lookback_days": 10,
+  "max_posts_per_source_asset": 100,
+  "max_pages_per_source_asset": 3,
+  "minimum_request_delay_seconds": 2,
+  "allow_paid_proxy": false,
+  "markets": [
+    {
+      "market": "HKEX",
+      "sources": ["LIHKG", "Moomoo_Community"],
+      "assets": [
+        {"ticker": "0700.HK", "source_code": "00700", "name": "Tencent Holdings"},
+        {"ticker": "9988.HK", "source_code": "09988", "name": "Alibaba Group"},
+        {"ticker": "0005.HK", "source_code": "00005", "name": "HSBC Holdings"},
+        {"ticker": "3690.HK", "source_code": "03690", "name": "Meituan"},
+        {"ticker": "1299.HK", "source_code": "01299", "name": "AIA Group"}
+      ]
+    },
+    {
+      "market": "KRX",
+      "sources": ["Naver_Finance_Stock_Discussion", "Daum_Finance_Forum"],
+      "assets": [
+        {"ticker": "005930.KS", "source_code": "005930", "name": "Samsung Electronics"},
+        {"ticker": "000660.KS", "source_code": "000660", "name": "SK hynix"},
+        {"ticker": "035420.KS", "source_code": "035420", "name": "Naver Corporation"},
+        {"ticker": "035720.KS", "source_code": "035720", "name": "Kakao Corporation"},
+        {"ticker": "005380.KS", "source_code": "005380", "name": "Hyundai Motor"}
+      ]
+    }
+  ],
+  "warning": "Documentation/template only: no custom Actor has been created, built, or run; these values are not an input schema for a third-party Actor. Verify each source's public access and the account's remaining Free-plan allowance before use."
 }

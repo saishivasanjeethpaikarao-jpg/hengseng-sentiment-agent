@@ -4,23 +4,62 @@
       "timezone": "Asia/Hong_Kong",
       "prediction_cutoff_local": "16:10",
       "candidate_sources": [
-        {"name": "LIHKG", "apify_actor_id": "SET_AFTER_VERIFICATION"},
-        {"name": "AAStocks_ETNet", "apify_actor_id": "SET_AFTER_VERIFICATION"}
+        {
+          "name": "LIHKG",
+          "platform": "LIHKG",
+          "source_page": "https://lihkg.com/category/15?order=now",
+          "apify_actor_id": null,
+          "collector_status": "public finance category link observed; ticker-level search and post fields unverified",
+          "collection_candidate": "custom public-page actor; no paid store actor"
+        },
+        {
+          "name": "Moomoo_Community",
+          "platform": "Futu/Moomoo Community",
+          "source_page_template": "https://www.moomoo.com/stock/{zero_padded_code}-HK/community",
+          "apify_actor_id": null,
+          "collector_status": "rendered public extraction shows ticker posts; direct HTTP returns empty app document; browser path unverified",
+          "collection_candidate": "custom browser actor only if it works without a paid proxy"
+        }
+      ],
+      "fallback_notes": [
+        "AAStocks tested forum route returned page-not-found; ETNet tested quote page did not show user-post discussions.",
+        "A public Telegram finance channel was readable but was not verified for five-HK-ticker coverage."
       ]
     },
     "KRX": {
       "timezone": "Asia/Seoul",
       "prediction_cutoff_local": "15:40",
       "candidate_sources": [
-        {"name": "Naver_Finance_Stock_Discussion", "apify_actor_id": "SET_AFTER_VERIFICATION"},
-        {"name": "Daum_Finance_Forum", "apify_actor_id": "SET_AFTER_VERIFICATION"}
+        {
+          "name": "Naver_Finance_Stock_Discussion",
+          "platform": "Naver Finance",
+          "hot_feed": "https://m.stock.naver.com/discussion/home/hot",
+          "source_page_template": "https://m.stock.naver.com/domestic/stock/{six_digit_code}/discussion",
+          "apify_actor_id": null,
+          "collector_status": "public hot feed verified; unauthenticated per-ticker post-feed endpoint unverified",
+          "collection_candidate": "custom browser actor or verified public endpoint"
+        },
+        {
+          "name": "Daum_Finance_Forum",
+          "platform": "Daum Finance",
+          "source_page_template": "https://m.finance.daum.net/quotes/A{six_digit_code}/talks",
+          "apify_actor_id": null,
+          "collector_status": "public per-stock talks page verified; repeatable collector not yet tested",
+          "collection_candidate": "custom public-page/browser actor"
+        }
       ]
     }
   },
+  "safety": {
+    "max_external_spend_usd": 0,
+    "paid_store_actors_allowed": false,
+    "paid_proxies_allowed": false,
+    "exa_enabled_only_after_free_balance_and_auto_recharge_off_confirmation": true,
+    "actor_ids_are_null_until_actually_created_and_tested": true
+  },
   "notes": [
-    "All four sources are explicitly listed in the assignment. Candidate source names do not prove a working Apify actor exists.",
-    "Verify each actor's input/output schema, source permissions, version, and exact per-run price before collection.",
-    "Example timezone cutoffs must be checked against the official exchange calendar and intended prediction time.",
-    "The optional Yahoo Finance price adapter is not an assignment-specified provider; replace it if the reviewer requires another licensed source."
+    "Candidate sources are all from the assignment's approved list; candidate status does not prove end-to-end access.",
+    "The example time cutoffs must be confirmed against official market calendars and the intended prediction time.",
+    "The optional Yahoo Finance price adapter is not an assignment-specified provider; replace it if the reviewer requires another provider."
   ]
 }

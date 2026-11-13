@@ -49,6 +49,8 @@ def build_parser() -> argparse.ArgumentParser:
     exa.add_argument("--market", help="Optional market filter, e.g. HKEX or KRX")
     exa.add_argument("--days", type=int, default=10)
     exa.add_argument("--num-results", type=int, default=8)
+    exa.add_argument("--confirm-exa-free-balance-and-auto-recharge-off", action="store_true",
+                     help="Confirm in Exa's dashboard that free credits remain and auto-recharge is disabled.")
     exa.add_argument("--out", required=True)
 
     prices = sub.add_parser("prices-pull", help="Optionally fetch daily bars via Yahoo Finance/yfinance")
@@ -103,13 +105,19 @@ def main(argv: list[str] | None = None) -> int:
         mapping = json.loads(Path(args.field_map).read_text(encoding="utf-8")) if args.field_map else None
         result = normalize_social_rows(raw, args.source, args.ticker, mapping)
         _parent(args.out)
-        result.to_csv(args.out, index=False)
-        print(f"Normalized {len(result)} records to {args.out}; inspect missing timestamps/text before modeling.")
+        Path(args.out).write_text(json.dumps(result, ensure_ascii=False, indent=2), encoding="utf-8")
+        print(f"Saved {len(result)} raw actor records to {args.out}; run charge cap: ${args.max_total_charge_usd:.2f}.")
     elif args.command == "exa-pull":
+        if not args.confirm_exa_free_balance_and_auto_recharge_off:
+            raise SystemExit(
+                "Exa request blocked: confirm in the Exa dashboard that free credits remain and auto-recharge is off."
+            )
         assets = pd.read_csv(args.assets)
         if args.market:
             assets = assets.loc[assets["market"].eq(args.market)]
-        result = exa_news_for_assets(assets, days=args.days, num_results=args.num_results)
+        result = exa_news_for_assets(
+            assets, days=args.days, num_results=args.num_results, confirm_free_only=True
+        )
         _parent(args.out)
         result.to_csv(args.out, index=False)
         print(f"Saved {len(result)} news records to {args.out}.")

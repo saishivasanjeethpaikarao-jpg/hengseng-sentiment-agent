@@ -1,7 +1,7 @@
 import numpy as np
 import pandas as pd
 
-from cwt_sentiment.collectors import normalize_social_rows
+from cwt_sentiment.collectors import normalize_social_rows, search_exa
 from cwt_sentiment.features import MODEL_FEATURES, aggregate_posts, build_training_frame
 from cwt_sentiment.model import chronological_folds, evaluate_oos
 from cwt_sentiment.sentiment import score_sentiment
@@ -25,6 +25,16 @@ def test_actor_output_normalizes_to_canonical_schema():
     assert rows.loc[0, "timestamp_utc"].endswith("+00:00")
     assert rows.loc[0, "text"] == "看多"
     assert rows.loc[0, "likes"] == 3
+
+
+def test_exa_requires_free_only_confirmation_before_any_request():
+    try:
+        search_exa("Tencent stock news")
+    except RuntimeError as exc:
+        assert "free credits remain" in str(exc)
+        assert "auto-recharge is off" in str(exc)
+    else:
+        raise AssertionError("Exa search must refuse without explicit free-only confirmation.")
 
 
 def test_utc_posts_map_to_local_time_and_roll_after_cutoff():

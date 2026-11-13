@@ -1,93 +1,86 @@
 # HKEX + KRX Sentiment-to-Price Starter
 
-A reproducible Python starter for the assignment. It supports Apify scraping (generic actor runner), Exa news, optional daily price bars, exchange-local alignment, a visual ticker report, and chronological out-of-sample next-session evaluation. It is a working scaffold, not a finished live run: no scraped data or model performance is claimed here.
+A reproducible Python scaffold for the assignment: source adapters, multilingual baseline sentiment, exchange-local event alignment, next-session targets, chronological validation, and an HTML ticker report. It is not a completed live run: no social dataset, Exa results, forecasts, or model-performance claims are included.
 
-## What the assignment asks for
+## Assignment requirements
 
-In plain terms, build one pipeline for two markets: choose five assets on Hong Kong Exchange (HKEX) and five on Korea Exchange (KRX); scrape the latest 10 days of social posts from at least two different listed sources per exchange using Apify; collect recent asset news with Exa; align event timestamps with market prices; summarize each ticker's sentiment, direction, position cues, and support/resistance mentions; make a visual report ranked by mentions/sentiment; and predict the next session's price with honest out-of-sample validation. The work is due within one week and the submission asks for a repository link plus the actual API/actor details used.
+Choose five assets on HKEX and five on KRX; collect the latest 10 days of social posts from at least two listed sources per exchange; gather related news using Exa; align posts and news with market sessions; report sentiment, direction, position cues, and support/resistance mentions; then forecast the next session and validate chronologically out of sample. The assignment requests a repository link and provider/actor details, not API tokens in a public repository.
 
-## Source choices and unresolved access
+## Source candidates and current access status
 
-`config/sources.json` proposes sources from the assignment's own list: LIHKG + AAStocks/ETNet in Hong Kong and Naver Finance + Daum Finance in Korea. These are source choices, not verified Apify actors. One public [LIHKG Apify listing](https://apify.com/claude_code_reviewer/lihkg-scraper-en/api/python) charges per scraped thread; one public [Telegram actor listing](https://apify.com/george.the.developer/telegram-channel-scraper) charges per message and requires channel names. Do not start a paid actor without approving its price. If no suitable existing actor is available for an assignment-listed source, a custom Apify actor may be required after verifying permitted access and Apify account costs. Actor IDs and input schemas belong in the run manifest once actually used—never guess them.
+The tentative Hong Kong pair is **LIHKG + Moomoo Community**. LIHKG's public category listing links to a finance section, but asset-keyword retrieval has not been tested. Moomoo's public ticker page displays ticker-tagged posts through a rendered-page extraction; a direct HTTP request returned only a generic empty app document, so a browser-based collector still needs testing. Neither source has a verified Apify Actor ID.
 
-The API adapter reads `APIFY_API_TOKEN` and `EXA_API_KEY` from environment variables. They are not in the repository. The Apify runner defaults to a **$0.00 maximum charge per run** and caps paid-result actors at 100 items; raise the cap only after approving a budget. Exa's current pricing page lists monthly starter credits but usage can become paid; check account credit before calls.
+The tentative Korea pair is **Naver Finance discussions + Daum Finance talks**. Naver's public hot feed contains stock-tagged posts, but its per-stock page is client-loaded and a stable ticker-feed endpoint has not been verified. Daum's public per-stock talks page exposes posts, but the page is dynamic and still needs a tested collector. Source details and links are in `RESEARCH_NOTES.md` and `DATA_ACCESS.md`.
+
+These are assignment-listed candidates, not proven collectors. Do not claim source coverage until an actual, free-only test returns relevant records with timestamps. The generic Apify client is a runner, not a source scraper; `config/apify_input.json` is a custom-Actor template and is not valid input for a third-party actor.
+
+## Free-only safeguards
+
+Apify's published Free plan is $0/month with $5 in monthly platform-usage credits; no account-specific balance or billing status is included here. No third-party Store Actor, Actor build/run, paid proxy, or social scrape has been used. Custom Actor runs consume the Free plan's monthly usage credits, so recheck the remaining allowance in the account dashboard before any run; never use a paid Actor or paid proxy. The Apify CLI's `--max-total-charge-usd` defaults to `$0.00`, which blocks billable runs unless a deliberate cap is provided.
+
+Exa has not been called. Its Free tier and optional auto-recharge depend on the user's account settings; this project cannot verify the remaining balance or recharge setting using the supplied standard API key. The `exa-pull` command is now blocked unless the operator explicitly confirms in the Exa dashboard that free credits remain and auto-recharge is off. Never pass that confirmation flag otherwise.
 
 ## Quick start
 
 ```bash
 python -m venv .venv
-source .venv/bin/activate       # Windows: .venv\\Scripts\\activate
+source .venv/bin/activate       # Windows: .venv\Scripts\activate
 pip install -e '.[dev,prices]'
 cp .env.example .env            # add credentials locally; never commit .env
+pytest
 ```
 
 Run `cwt-sentiment --help` to see commands and options.
 
-### 1. Collect the sources
+### Social collection
 
-For each selected actor, save the exact input JSON that matches that actor's documented schema and run:
+Only use a source-specific Actor after its public-source access, input/output schema, and zero-cost path are confirmed. The generic runner retains raw output and has a `$0.00` charge cap by default:
 
 ```bash
-cwt-sentiment apify-pull --actor-id 'owner~actor' --input path/to/actor_input.json --out data/raw/source.json
+cwt-sentiment apify-pull --actor-id 'owner~your-custom-actor' --input config/apify_input.json --out data/raw/source.json
 cwt-sentiment normalize-social --raw data/raw/source.json --source LIHKG --ticker 0700.HK --out data/normalized/lihkg_0700.csv
 ```
 
-The first command has `--max-total-charge-usd 0` by default, so an actor needing paid usage stops rather than spending. Only supply a larger `--max-total-charge-usd` after approving that amount. Repeat for every chosen source/asset. Use `--field-map mapping.json` if actor output field names differ from the default aliases. `config/apify_input.json` is an example schema for the candidate LIHKG actor only; it is not universal and does not indicate that its paid actor has been approved.
+The example input is not runnable until a custom Actor implementing that template exists. A positive Apify run cap may consume included Free-plan credits; only use one after checking the account still has enough free allowance and confirming no paid Actor/proxy is involved.
 
-Fetch Exa news after checking available account credit:
+### Exa news
+
+The connector is included, but the project refuses to call it without this explicit dashboard check:
 
 ```bash
-cwt-sentiment exa-pull --assets config/assets.csv --market HKEX --days 10 --out data/normalized/hk_news.csv
+cwt-sentiment exa-pull --assets config/assets.csv --market HKEX --days 10 --out data/normalized/hk_news.csv \
+  --confirm-exa-free-balance-and-auto-recharge-off
 ```
 
-Optional price history convenience adapter (the assignment does not prescribe a market-data provider; verify access/terms or replace with an approved provider):
+Use the flag only after confirming both conditions in Exa's dashboard. If the account status is uncertain, leave the step disabled.
+
+### Optional daily prices
+
+The assignment does not specify a price provider. The starter includes an optional Yahoo Finance adapter; check availability and terms or replace it with an approved provider. For useful validation, collect 6–12 months of daily bars; the 10-day social window is not enough by itself.
 
 ```bash
 cwt-sentiment prices-pull --assets config/assets.csv --market HKEX --period 1y --out data/normalized/hk_prices.csv
 ```
 
-Collect at least 6–12 months of daily bars for a useful time-series validation. The 10-day requirement is for social collection; ten price observations alone cannot support credible validation.
+### Build, evaluate, forecast, and report
 
-### 2. Build aligned features and evaluate
-
-Run separately for each market so the correct timezone/cutoff is used:
+Run separately for each market so its timezone and prediction cutoff are correct:
 
 ```bash
 cwt-sentiment build --posts data/normalized/hk_posts.csv --news data/normalized/hk_news.csv --prices data/normalized/hk_prices.csv --timezone Asia/Hong_Kong --cutoff 16:10 --out data/features/hk.csv
 cwt-sentiment evaluate --features data/features/hk.csv --splits 4 --metrics-out reports/hk_metrics.csv --predictions-out reports/hk_predictions.csv
 cwt-sentiment forecast --features data/features/hk.csv --out reports/hk_forecast.csv
-```
-
-For Korea, use `Asia/Seoul` and a confirmed cutoff. The target is next available session's log return `log(close[t+1] / close[t])`; the prediction is also expressed as an estimated next close. Expanding chronological folds split by unique date so all assets from a date stay together; a zero-return benchmark is included. No random shuffle is used.
-
-### 3. Create the visual report
-
-```bash
 cwt-sentiment report --posts data/normalized/hk_posts.csv --prices data/normalized/hk_prices.csv --assets config/assets.csv --market HKEX --timezone Asia/Hong_Kong --out reports/hk.html
 ```
 
-The report sorts by mentions and sentiment and includes current price, sentiment/direction, and heuristic position/support/resistance cues. Review those text extractions before relying on them.
+For Korea, use `Asia/Seoul` and a confirmed cutoff. The target is the next available session's log return, `log(close[t+1] / close[t])`; expanding chronological folds split by date, so all assets from a date stay together. A zero-return benchmark is included; no random shuffle is used.
 
-## Canonical input schemas
+## Canonical schemas
 
-All event timestamps should be UTC ISO-8601 strings; retain original timestamps separately when available. `posts.csv` requires `ticker,source,timestamp_utc,text`; optional: `likes,reposts,views,author_followers,post_id,url`. `news.csv` requires `ticker,published_at_utc,title`; optional: `text,url,source`. `prices.csv` requires `ticker,date,close`; optional: `open,high,low,volume,currency,data_source`. Price `date` must be the exchange-local trading date (`YYYY-MM-DD`).
+Social rows use `ticker,source,timestamp_utc,text` and optionally `likes,reposts,views,author_followers,post_id,url`. News rows use `ticker,published_at_utc,title` and optionally `text,url,source`. Price rows use `ticker,date,close` and optionally `open,high,low,volume,currency,data_source`. Timestamps should be stored in UTC ISO-8601 form; price dates should be exchange-local trading dates.
 
-The Apify pull keeps raw actor JSON. `normalize-social` maps common LIHKG/Telegram fields to the canonical schema, but source-specific mappings still need inspection. The exact output fields can change by actor version, so save raw responses and actor IDs for reproducibility.
+## Limits and safety
 
-## Time alignment and validation limits
+Events after the configured local cutoff and events on non-trading dates roll to the next available supplied market session. Use an official exchange calendar for production. The baseline keyword scorer is a demonstrator, not a validated Cantonese/Korean finance model; label a sample from each source/language before reporting conclusions. Position, support, and resistance phrases are noisy community claims, not investment advice. Missing follower counts must remain missing rather than be invented.
 
-Event timestamps are parsed as UTC then assigned to a local date/session from the supplied price dates. Events after the configured local cutoff and events on non-trading dates roll forward to the next available price session; events after the final supplied price date cannot be aligned. For production, use an exchange calendar that includes official holidays/half-days and verify the prediction cutoff against market hours. The cutoff is an example default, not an exchange guarantee.
-
-The current target is next available close-to-close return. Price-only history longer than 10 days helps validate code but does not create historical social sentiment. Stronger validation needs historical sentiment/news features too. The baseline sentiment dictionary is a demonstrator, not a validated Cantonese/Korean finance model; label a sample from each source/language and report errors before making claims. Missing-event flags distinguish no coverage from neutral sentiment.
-
-## Security and responsible use
-
-Keep `.env` private and never commit API keys, tokens, authorization URLs, or raw private-group content. The assignment asks for actual provider/actor details; actor IDs are fine to list, but do not send a live API token through public Git or ordinary email. Share a key only through a secure method approved by the recipient. Collect public, permitted content only; honor source terms, actor terms, rate limits, privacy expectations, and data retention rules. All sentiment/position/support/resistance outputs are noisy community claims, not investment advice.
-
-## Tests
-
-```bash
-pytest
-```
-
-Tests use small in-memory fixtures only to check code behavior; they are not collected market data or evidence of predictive performance.
+Keep `.env`, API keys, raw data, and private/closed-group content out of Git. Do not email API tokens in ordinary email; share them only through the recipient's approved secure process. The assignment repository is public by the user's choice, so include code and templates only.

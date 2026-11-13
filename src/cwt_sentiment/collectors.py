@@ -77,7 +77,10 @@ def normalize_social_rows(items: list[dict], source: str, ticker: str,
     return pd.DataFrame(rows, columns=POST_COLUMNS)
 
 
-def search_exa(query: str, api_key: str | None = None, days: int = 10, num_results: int = 10):
+def search_exa(query: str, api_key: str | None = None, days: int = 10, num_results: int = 10,
+               confirm_free_only: bool = False):
+    if not confirm_free_only:
+        raise RuntimeError("Exa calls are disabled until you confirm free credits remain and auto-recharge is off.")
     api_key = api_key or os.getenv("EXA_API_KEY")
     if not api_key:
         raise RuntimeError("Set EXA_API_KEY in the environment before Exa collection.")
@@ -109,12 +112,13 @@ def search_exa(query: str, api_key: str | None = None, days: int = 10, num_resul
     return rows
 
 
-def exa_news_for_assets(assets: pd.DataFrame, days: int = 10, num_results: int = 8) -> pd.DataFrame:
+def exa_news_for_assets(assets: pd.DataFrame, days: int = 10, num_results: int = 8,
+                        confirm_free_only: bool = False) -> pd.DataFrame:
     rows = []
     for row in assets.to_dict(orient="records"):
         ticker, name = row["ticker"], row["asset_name"]
         query = f'"{name}" OR "{ticker}" stock news'
-        for item in search_exa(query, days=days, num_results=num_results):
+        for item in search_exa(query, days=days, num_results=num_results, confirm_free_only=confirm_free_only):
             item["ticker"] = ticker
             item["asset_name"] = name
             rows.append(item)

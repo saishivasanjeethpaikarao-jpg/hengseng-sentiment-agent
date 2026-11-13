@@ -1,24 +1,36 @@
 # Live data access checklist
 
-## Already prepared in this starter
+## Prepared in the starter
 
-The code can call Apify actors, normalize raw social output, query Exa, optionally download daily price bars, align UTC timestamps to supplied exchange sessions, build next-session labels, run chronological validation, and create an HTML report. Candidate universe and timezones are editable in `config/`.
+The code can run a selected Apify Actor with a default `$0.00` charge cap, normalize common social-post fields, query Exa after an explicit free-only confirmation, optionally fetch daily prices, align UTC events to supplied exchange sessions, build next-session labels, run chronological validation, and create an HTML report.
 
-## Source pairing required by the assignment
+No social scrape, Exa query, Actor creation/build/run, or live market-price pull has been performed. There are no live datasets, forecasts, or performance metrics in the repository.
 
-The proposed pairs are all on the assignment's list: LIHKG + AAStocks/ETNet for HKEX, and Naver Finance stock discussion boards + Daum Finance forums for KRX. The source-pair choice is not yet validated against live Apify actors. I found one [LIHKG Apify actor listing](https://apify.com/claude_code_reviewer/lihkg-scraper-en/api/python), which documents search/date filters but charges per scraped thread (listed from $2 per 1,000 threads). I did not find a verified Apify actor for the AAStocks/ETNet, Naver stock-board, or Daum forum sources in this pass. A [public Telegram actor listing](https://apify.com/george.the.developer/telegram-channel-scraper) is an assignment-approved alternative source, but it lists $5 per 1,000 messages and requires public channel names; it is not selected here. No paid actor has been run.
+## Source access status
 
-The Apify CLI defaults to a **$0.00 per-run charge cap** and at most 100 billable results. A source actor that charges for results will not run successfully with that cap; only raise it after deciding on a budget. The cap is enforced using Apify's run API parameter. Apify's [official run endpoint documentation](https://docs.apify.com/api/v2/actor-run-sync-get-dataset-items-post) describes `maxTotalChargeUsd` and `maxItems`.
+The assignment requires two different listed social sources per exchange. The current candidates are **LIHKG + Moomoo Community** for HKEX and **Naver Finance discussions + Daum Finance talks** for KRX. These pairs are not yet proven end-to-end collectors, and no Actor IDs are set.
 
-## Needed before a real collection
+| Source | What is verified | What still needs a free-only test |
+|---|---|---|
+| LIHKG | The public category listing shows a finance section and recent threads. | Confirm ticker/keyword search and thread/post fields through a custom public-page collector. |
+| Moomoo Community | A rendered public page extraction shows ticker-tagged posts. | A direct HTTP response was only an empty app document; test a browser-rendered path without a paid proxy. |
+| Naver Finance | The public hot discussion feed contains stock-tagged posts. | The per-stock discussion page is client-loaded; identify/verify the unauthenticated post-feed path. |
+| Daum Finance | A public per-stock talks page exposes a ticker-specific post list. | Verify the dynamic list can be collected repeatably using a free custom collector. |
 
-1. **Apify access:** an API token and either existing, approved actor IDs/input files for two HK sources and two Korean sources, or approval to prepare/deploy custom Apify actors for the four listed sites. Verify each actor's input/output schema, source permissions, version, and price.
-2. **Exa access:** an Exa API key. Its current [pricing page](https://exa.ai/pricing) lists $10 monthly starter credits and usage-based pricing after that; do not assume the account has unused credit. This code makes one search per asset and retrieves text, so confirm the account's limit before running it.
-3. **Price source:** either the optional Yahoo Finance adapter after checking symbol coverage/terms, or provide a permitted provider's daily OHLCV CSV. Use 6–12 months of price history for validation while keeping the social scrape to the requested 10 days.
-4. **Asset confirmation:** the ten symbols in `config/assets.csv` are editable examples, not specified by the assignment. Confirm them or replace them with five assets per exchange.
+AAStocks' tested forum URL returned page-not-found, and the ETNet quote page tested did not expose user-post discussions. A public Telegram finance channel was also checked, but the visible messages were mainly macro/gold commentary rather than a dependable five-HK-ticker feed. These are not selected as working source paths. See `RESEARCH_NOTES.md` for public URLs and source-level detail.
 
-The saved-secret search found no Apify or Exa keys, and neither environment variable is available here. No external API call, paid actor run, or market scrape has been made. The credential values must be supplied through the secure form before any live calls; never place tokens in Git or ordinary email.
+## Free-only boundary
 
-## Why no live results are included
+Apify's published Free plan is $0/month with $5 in monthly platform-usage credits. That does not make every Actor or proxy free: custom Actor builds/runs consume included monthly usage credits, and no Store Actor or paid proxy may be used. Verify the account's remaining allowance in its dashboard before any custom run and keep the run cap within the included allowance. The generic runner's default cap is `$0.00`.
 
-Without the required credentials and four working source integrations, a full scrape cannot be performed honestly. This project does not fabricate posts, prices, forecasts, or performance results. First run a capped small test for each source, inspect missing timestamps, duplicate rate, ticker relevance and schema, then collect the 10-day window.
+The user's Exa key is available only through the secure environment, not in Git. No Exa request has been made because the supplied standard API key does not reveal the account's remaining free credits or auto-recharge state. Before using Exa, the operator must confirm in the Exa dashboard that free credits remain and auto-recharge is disabled, then pass `--confirm-exa-free-balance-and-auto-recharge-off` to the CLI. If either setting is uncertain, do not call Exa.
+
+## Remaining implementation steps
+
+1. Verify that the two chosen sources per exchange can each return recent, relevant, public posts and required metadata without paid Actors or proxies. If a source is blocked, pick another assignment-listed source only after verifying its access path; do not substitute a paid source.
+2. Check the Apify Free account's remaining allowance before building or running any custom Actor. Save its exact Actor ID, source URLs, input schema, and version after a successful test; do not invent IDs.
+3. Confirm Exa's free balance and auto-recharge setting in its dashboard before using the Exa adapter.
+4. Confirm or replace the example asset universe in `config/assets.csv`, and verify exchange cutoffs/calendars.
+5. Collect 6–12 months of price history from a permitted source for validation; keep social posts to the requested 10-day window.
+
+The ten tickers in `config/assets.csv` are editable examples, not assignment-prescribed assets. API tokens must never be committed to the public repository or sent by ordinary email. Keep raw outputs private until retention and source terms are checked.
