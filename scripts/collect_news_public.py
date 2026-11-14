@@ -136,7 +136,7 @@ def main() -> int:
         "collection_finished_at_utc": iso(datetime.now(timezone.utc)), "cutoff_utc": iso(cutoff),
         "window_days": DAYS, "max_items_per_ticker": MAX_ITEMS, "concurrency": CONCURRENCY,
         "method": "Public Google News RSS over HTTP; headline-only; no Exa, Apify, keys, login, or paid service",
-        "explicit_no_exa_compliance": "Exa was not called because free credits are USD0 and auto recharge is off.",
+        "explicit_no_exa_compliance": "Exa was not called: no API key is available in this environment and the free-credit balance is unverified; see DATA_ACCESS.md.",
         "news_provider": PROVIDER, "assets_requested": len(assets), "assets_succeeded": sum(bool(x["rows"]) for x in results),
         "total_records": len(rows), "assets": status_assets,
         "failures": [x for x in status_assets if x["status_code"] != 200 or x["errors"]]}

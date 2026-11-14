@@ -13,3 +13,4 @@ reports/*.csv
 reports/*.html
 reports/real_run/
 ARTIFACT_MANIFEST.sha256
+.pip-tmp/

@@ -74,22 +74,36 @@ def render(summary_path: Path, output_path: Path) -> Path:
         transform=axes[0].transAxes, va="top", color=muted, fontsize=9,
     )
 
-    # Three-day sentiment pilot and same-window comparators.
-    pilot_labels = ["HKEX\n15 rows · 3 dates", "KRX\n15 rows · 3 dates"]
-    series = [
-        (
-            "Sentiment Ridge", teal,
-            [100 * models[m]["short_sentiment_experiment"]["metrics"]["mae_return"] for m in markets],
-        ),
-        (
-            "Price-only Ridge", blue,
-            [100 * models[m]["short_sentiment_experiment"]["paired_price_only_metrics"]["mae_return"] for m in markets],
-        ),
-        (
-            "Zero-return baseline", pale,
-            [100 * models[m]["short_sentiment_experiment"]["metrics"]["zero_baseline_mae"] for m in markets],
-        ),
-    ]
+    # Short sentiment pilot and same-window comparators. Row/date counts come
+    # from the summary, never hardcoded: a later run with a different pilot
+    # size must not render stale labels. If the pilot was not evaluated
+    # (too few social sessions), the panel states that instead of plotting.
+    pilot = [models[m]["short_sentiment_experiment"] for m in markets]
+    pilot_evaluated = all("metrics" in p for p in pilot)
+    pilot_labels = []
+    for m, p in zip(markets, pilot):
+        if "metrics" in p:
+            pilot_labels.append(
+                f"{m}\n{p['metrics']['n_test']} rows · {p['metrics']['test_dates']} dates")
+        else:
+            pilot_labels.append(f"{m}\nnot evaluated")
+    if pilot_evaluated:
+        series = [
+            (
+                "Sentiment Ridge", teal,
+                [100 * models[m]["short_sentiment_experiment"]["metrics"]["mae_return"] for m in markets],
+            ),
+            (
+                "Price-only Ridge", blue,
+                [100 * models[m]["short_sentiment_experiment"]["paired_price_only_metrics"]["mae_return"] for m in markets],
+            ),
+            (
+                "Zero-return baseline", pale,
+                [100 * models[m]["short_sentiment_experiment"]["metrics"]["zero_baseline_mae"] for m in markets],
+            ),
+        ]
+    else:
+        series = []
     x_pilot = np.arange(len(markets))
     pilot_width = 0.23
     all_bars = []
@@ -106,10 +120,14 @@ def render(summary_path: Path, output_path: Path) -> Path:
     axes[1].set_ylabel("Mean absolute log-return error (MAE, %)", color=muted, fontsize=10)
     axes[1].set_xticks(x_pilot, pilot_labels)
     axes[1].set_ylim(0, 6.4)
+    if not pilot_evaluated:
+        axes[1].text(0.5, 0.5, "Pilot not evaluated:\ntoo few social sessions\nin this run",
+                     transform=axes[1].transAxes, ha="center", va="center",
+                     color=muted, fontsize=11)
     for bars in all_bars:
         axes[1].bar_label(bars, fmt="%.3f", padding=4, fontsize=8.5, color=ink)
     axes[1].text(
-        0.02, 0.96, "Only 3 held-out dates per market; not enough to infer an edge",
+        0.02, 0.96, "Only a few held-out dates per market; not enough to infer an edge",
         transform=axes[1].transAxes, va="top", color=muted, fontsize=9,
     )
 
@@ -120,10 +138,15 @@ def render(summary_path: Path, output_path: Path) -> Path:
         "What the frozen run actually shows", x=0.06, y=0.99, ha="left",
         fontsize=19, fontweight="bold", color=ink,
     )
+    pilot_note = (
+        "The tiny sentiment run beats its paired price-only Ridge, but still loses to no change. "
+        if pilot_evaluated else
+        "The sentiment pilot was not evaluated in this run (too few social sessions). "
+    )
     fig.text(
         0.06, 0.025,
         "Lower is better. Long-history Ridge slightly loses to no change in both markets. "
-        "The tiny sentiment run beats its paired price-only Ridge, but still loses to no change. "
+        + pilot_note +
         "No predictive edge is established.",
         color=muted, fontsize=9.5, wrap=True,
     )

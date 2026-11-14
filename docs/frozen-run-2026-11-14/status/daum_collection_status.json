@@ -1,0 +1,246 @@
+{
+  "collection_started_at_utc": "2026-11-13T19:32:37.172249Z",
+  "collection_finished_at_utc": "2026-11-13T19:32:55.158812Z",
+  "cutoff_utc": "2026-11-03T19:32:37.172249Z",
+  "window_days": 10,
+  "max_pages_per_ticker": 5,
+  "method": "requests HTTP only; no keys, login, browser, proxy, paid API, Apify, or Exa",
+  "endpoint": "https://m.finance.daum.net/api/home/daum",
+  "referer_template": "https://m.finance.daum.net/quotes/A{code}/talks",
+  "rate_limit_seconds_between_pages": 0.55,
+  "timestamp_policy": "Daum createdAt is observed as naive site-local time; interpreted explicitly as Asia/Seoul and converted to UTC. Values with an explicit offset use that offset.",
+  "sources": {
+    "daum_finance:005930.KS:page1": {
+      "ticker": "005930.KS",
+      "asset_name": "Samsung Electronics",
+      "source": "daum_finance",
+      "page": 1,
+      "requested_url": "https://m.finance.daum.net/api/home/daum?path=%2Fcontent%2Fdebates%2FA005930%3Fpage%3D1%26perPage%3D30%26notice%3Dtrue",
+      "raw_path": "data/raw/daum_public/daum_005930_page1.json",
+      "status_code": 200,
+      "records_seen": 30,
+      "records_in_window": 30,
+      "usable_timestamp_count": 30,
+      "min_timestamp_utc": "2026-11-12T07:16:52Z",
+      "max_timestamp_utc": "2026-11-13T11:10:31Z",
+      "access_failure": null,
+      "timestamp_assumption": "naive createdAt interpreted as Asia/Seoul; explicit offsets honored",
+      "parser_note": "Daum API data.posts; page size 30; stop at 10-day UTC boundary or max 5 pages",
+      "timestamp_parse_notes": {
+        "naive_assumed_Asia/Seoul": 30
+      }
+    },
+    "daum_finance:005930.KS:page2": {
+      "ticker": "005930.KS",
+      "asset_name": "Samsung Electronics",
+      "source": "daum_finance",
+      "page": 2,
+      "requested_url": "https://m.finance.daum.net/api/home/daum?path=%2Fcontent%2Fdebates%2FA005930%3Fpage%3D2%26perPage%3D30%26notice%3Dtrue",
+      "raw_path": "data/raw/daum_public/daum_005930_page2.json",
+      "status_code": 200,
+      "records_seen": 30,
+      "records_in_window": 30,
+      "usable_timestamp_count": 30,
+      "min_timestamp_utc": "2026-11-11T05:23:59Z",
+      "max_timestamp_utc": "2026-11-12T07:16:03Z",
+      "access_failure": null,
+      "timestamp_assumption": "naive createdAt interpreted as Asia/Seoul; explicit offsets honored",
+      "parser_note": "Daum API data.posts; page size 30; stop at 10-day UTC boundary or max 5 pages",
+      "timestamp_parse_notes": {
+        "naive_assumed_Asia/Seoul": 30
+      }
+    },
+    "daum_finance:005930.KS:page3": {
+      "ticker": "005930.KS",
+      "asset_name": "Samsung Electronics",
+      "source": "daum_finance",
+      "page": 3,
+      "requested_url": "https://m.finance.daum.net/api/home/daum?path=%2Fcontent%2Fdebates%2FA005930%3Fpage%3D3%26perPage%3D30%26notice%3Dtrue",
+      "raw_path": "data/raw/daum_public/daum_005930_page3.json",
+      "status_code": 200,
+      "records_seen": 30,
+      "records_in_window": 30,
+      "usable_timestamp_count": 30,
+      "min_timestamp_utc": "2026-11-09T13:33:38Z",
+      "max_timestamp_utc": "2026-11-11T05:16:23Z",
+      "access_failure": null,
+      "timestamp_assumption": "naive createdAt interpreted as Asia/Seoul; explicit offsets honored",
+      "parser_note": "Daum API data.posts; page size 30; stop at 10-day UTC boundary or max 5 pages",
+      "timestamp_parse_notes": {
+        "naive_assumed_Asia/Seoul": 30
+      }
+    },
+    "daum_finance:005930.KS:page4": {
+      "ticker": "005930.KS",
+      "asset_name": "Samsung Electronics",
+      "source": "daum_finance",
+      "page": 4,
+      "requested_url": "https://m.finance.daum.net/api/home/daum?path=%2Fcontent%2Fdebates%2FA005930%3Fpage%3D4%26perPage%3D30%26notice%3Dtrue",
+      "raw_path": "data/raw/daum_public/daum_005930_page4.json",
+      "status_code": 200,
+      "records_seen": 30,
+      "records_in_window": 30,
+      "usable_timestamp_count": 30,
+      "min_timestamp_utc": "2026-11-06T23:59:16Z",
+      "max_timestamp_utc": "2026-11-09T13:19:02Z",
+      "access_failure": null,
+      "timestamp_assumption": "naive createdAt interpreted as Asia/Seoul; explicit offsets honored",
+      "parser_note": "Daum API data.posts; page size 30; stop at 10-day UTC boundary or max 5 pages",
+      "timestamp_parse_notes": {
+        "naive_assumed_Asia/Seoul": 30
+      }
+    },
+    "daum_finance:005930.KS:page5": {
+      "ticker": "005930.KS",
+      "asset_name": "Samsung Electronics",
+      "source": "daum_finance",
+      "page": 5,
+      "requested_url": "https://m.finance.daum.net/api/home/daum?path=%2Fcontent%2Fdebates%2FA005930%3Fpage%3D5%26perPage%3D30%26notice%3Dtrue",
+      "raw_path": "data/raw/daum_public/daum_005930_page5.json",
+      "status_code": 200,
+      "records_seen": 30,
+      "records_in_window": 30,
+      "usable_timestamp_count": 30,
+      "min_timestamp_utc": "2026-11-05T05:39:28Z",
+      "max_timestamp_utc": "2026-11-06T13:54:24Z",
+      "access_failure": null,
+      "timestamp_assumption": "naive createdAt interpreted as Asia/Seoul; explicit offsets honored",
+      "parser_note": "Daum API data.posts; page size 30; stop at 10-day UTC boundary or max 5 pages",
+      "timestamp_parse_notes": {
+        "naive_assumed_Asia/Seoul": 30
+      }
+    },
+    "daum_finance:000660.KS:page1": {
+      "ticker": "000660.KS",
+      "asset_name": "SK hynix",
+      "source": "daum_finance",
+      "page": 1,
+      "requested_url": "https://m.finance.daum.net/api/home/daum?path=%2Fcontent%2Fdebates%2FA000660%3Fpage%3D1%26perPage%3D30%26notice%3Dtrue",
+      "raw_path": "data/raw/daum_public/daum_000660_page1.json",
+      "status_code": 200,
+      "records_seen": 30,
+      "records_in_window": 30,
+      "usable_timestamp_count": 30,
+      "min_timestamp_utc": "2026-11-07T22:52:40Z",
+      "max_timestamp_utc": "2026-11-13T10:54:34Z",
+      "access_failure": null,
+      "timestamp_assumption": "naive createdAt interpreted as Asia/Seoul; explicit offsets honored",
+      "parser_note": "Daum API data.posts; page size 30; stop at 10-day UTC boundary or max 5 pages",
+      "timestamp_parse_notes": {
+        "naive_assumed_Asia/Seoul": 30
+      }
+    },
+    "daum_finance:000660.KS:page2": {
+      "ticker": "000660.KS",
+      "asset_name": "SK hynix",
+      "source": "daum_finance",
+      "page": 2,
+      "requested_url": "https://m.finance.daum.net/api/home/daum?path=%2Fcontent%2Fdebates%2FA000660%3Fpage%3D2%26perPage%3D30%26notice%3Dtrue",
+      "raw_path": "data/raw/daum_public/daum_000660_page2.json",
+      "status_code": 200,
+      "records_seen": 30,
+      "records_in_window": 30,
+      "usable_timestamp_count": 30,
+      "min_timestamp_utc": "2026-11-04T12:34:37Z",
+      "max_timestamp_utc": "2026-11-07T06:30:06Z",
+      "access_failure": null,
+      "timestamp_assumption": "naive createdAt interpreted as Asia/Seoul; explicit offsets honored",
+      "parser_note": "Daum API data.posts; page size 30; stop at 10-day UTC boundary or max 5 pages",
+      "timestamp_parse_notes": {
+        "naive_assumed_Asia/Seoul": 30
+      }
+    },
+    "daum_finance:000660.KS:page3": {
+      "ticker": "000660.KS",
+      "asset_name": "SK hynix",
+      "source": "daum_finance",
+      "page": 3,
+      "requested_url": "https://m.finance.daum.net/api/home/daum?path=%2Fcontent%2Fdebates%2FA000660%3Fpage%3D3%26perPage%3D30%26notice%3Dtrue",
+      "raw_path": "data/raw/daum_public/daum_000660_page3.json",
+      "status_code": 200,
+      "records_seen": 30,
+      "records_in_window": 2,
+      "usable_timestamp_count": 2,
+      "min_timestamp_utc": "2026-11-03T20:35:02Z",
+      "max_timestamp_utc": "2026-11-03T21:40:09Z",
+      "access_failure": null,
+      "timestamp_assumption": "naive createdAt interpreted as Asia/Seoul; explicit offsets honored",
+      "parser_note": "Daum API data.posts; page size 30; stop at 10-day UTC boundary or max 5 pages",
+      "timestamp_parse_notes": {
+        "naive_assumed_Asia/Seoul": 30
+      }
+    },
+    "daum_finance:035420.KS:page1": {
+      "ticker": "035420.KS",
+      "asset_name": "Naver Corporation",
+      "source": "daum_finance",
+      "page": 1,
+      "requested_url": "https://m.finance.daum.net/api/home/daum?path=%2Fcontent%2Fdebates%2FA035420%3Fpage%3D1%26perPage%3D30%26notice%3Dtrue",
+      "raw_path": "data/raw/daum_public/daum_035420_page1.json",
+      "status_code": 200,
+      "records_seen": 30,
+      "records_in_window": 2,
+      "usable_timestamp_count": 2,
+      "min_timestamp_utc": "2026-11-11T23:13:32Z",
+      "max_timestamp_utc": "2026-11-12T02:23:39Z",
+      "access_failure": null,
+      "timestamp_assumption": "naive createdAt interpreted as Asia/Seoul; explicit offsets honored",
+      "parser_note": "Daum API data.posts; page size 30; stop at 10-day UTC boundary or max 5 pages",
+      "timestamp_parse_notes": {
+        "naive_assumed_Asia/Seoul": 30
+      }
+    },
+    "daum_finance:035720.KS:page1": {
+      "ticker": "035720.KS",
+      "asset_name": "Kakao Corporation",
+      "source": "daum_finance",
+      "page": 1,
+      "requested_url": "https://m.finance.daum.net/api/home/daum?path=%2Fcontent%2Fdebates%2FA035720%3Fpage%3D1%26perPage%3D30%26notice%3Dtrue",
+      "raw_path": "data/raw/daum_public/daum_035720_page1.json",
+      "status_code": 200,
+      "records_seen": 30,
+      "records_in_window": 1,
+      "usable_timestamp_count": 1,
+      "min_timestamp_utc": "2026-11-07T23:23:24Z",
+      "max_timestamp_utc": "2026-11-07T23:23:24Z",
+      "access_failure": null,
+      "timestamp_assumption": "naive createdAt interpreted as Asia/Seoul; explicit offsets honored",
+      "parser_note": "Daum API data.posts; page size 30; stop at 10-day UTC boundary or max 5 pages",
+      "timestamp_parse_notes": {
+        "naive_assumed_Asia/Seoul": 30
+      }
+    },
+    "daum_finance:005380.KS:page1": {
+      "ticker": "005380.KS",
+      "asset_name": "Hyundai Motor",
+      "source": "daum_finance",
+      "page": 1,
+      "requested_url": "https://m.finance.daum.net/api/home/daum?path=%2Fcontent%2Fdebates%2FA005380%3Fpage%3D1%26perPage%3D30%26notice%3Dtrue",
+      "raw_path": "data/raw/daum_public/daum_005380_page1.json",
+      "status_code": 200,
+      "records_seen": 30,
+      "records_in_window": 10,
+      "usable_timestamp_count": 10,
+      "min_timestamp_utc": "2026-11-05T09:29:25Z",
+      "max_timestamp_utc": "2026-11-13T04:23:32Z",
+      "access_failure": null,
+      "timestamp_assumption": "naive createdAt interpreted as Asia/Seoul; explicit offsets honored",
+      "parser_note": "Daum API data.posts; page size 30; stop at 10-day UTC boundary or max 5 pages",
+      "timestamp_parse_notes": {
+        "naive_assumed_Asia/Seoul": 30
+      }
+    }
+  },
+  "failures": [],
+  "total_daum_records": 225,
+  "total_normalized_records_after_append": 1475,
+  "count_by_ticker": {
+    "daum_finance:005930.KS": 150,
+    "daum_finance:000660.KS": 62,
+    "daum_finance:035420.KS": 2,
+    "daum_finance:035720.KS": 1,
+    "daum_finance:005380.KS": 10
+  },
+  "normalized_csv": "data/normalized/kr_posts.csv",
+  "raw_directory": "data/raw/daum_public"
+}

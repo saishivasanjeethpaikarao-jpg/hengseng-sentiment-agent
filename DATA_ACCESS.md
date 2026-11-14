@@ -17,9 +17,26 @@ Public entry pages: [LIHKG](https://lihkg.com/category/15), [Moomoo](https://www
 
 ## Required-tool gap
 
-**No Apify Actor was created, built or run for this collection. Actor IDs remain null.** The source-specific local scripts are not Apify execution evidence. If the evaluator requires Apify, deploy/test appropriate custom actors only after a verified no-charge route is available, retain actual IDs and logs, and rerun collection.
+**No Apify Actor run has happened yet — but the Actor now exists.**
+`apify-actor/` contains a custom Actor (`cwt-public-finance-sources`) built
+from `config/apify_input.json`, with the same public-endpoint fetch logic
+the local collectors proved (LIHKG search API + category listing with
+browser headers, Moomoo feed pages, Naver discussion API, Daum debates
+API). Its fetch logic was tested locally against the real endpoints on
+2026-11-14 (`python apify-actor/main.py --local-test`). What is still
+missing: an Actor created in Shiv's Apify account and one run — that needs
+Shiv's `APIFY_API_TOKEN`. Run it with `scripts/run_apify_collection.py`
+(allowance check first, `--confirm-free-balance` gate); it records the
+Actor ID, run ID, dataset and run log in `data/apify/<run_id>/`. Until
+then, Actor IDs remain null and the submission cannot claim Apify use.
 
-**No Exa request was made.** RSS news is clearly labelled as a replacement, not passed off as Exa output. Obtain evaluator acceptance of the substitute or a verified, authorised free Exa allowance before calling the requirement complete.
+**No Exa request was made.** `scripts/run_exa_news.py` is written and
+key-gated (10 queries, one per ticker, dry-run mode, refuses without
+`--confirm-free-balance-and-auto-recharge-off`). RSS news is clearly
+labelled as a replacement, not passed off as Exa output. The call needs
+Shiv's `EXA_API_KEY`; obtain evaluator acceptance of the substitute or a
+verified, authorised free Exa allowance before calling the requirement
+complete.
 
 The external data-provider spend cap is **USD 0**. No paid Store Actor, paid proxy, subscription, auto-recharge setting change or paid API call was authorised. A provider’s advertised free tier is not evidence of the current account’s remaining allowance. Account-specific balances and credentials are not included in this public project.
 

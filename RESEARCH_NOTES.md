@@ -23,3 +23,52 @@ The tentative source pairs remain **LIHKG + Moomoo** for Hong Kong and **Naver +
 
 No live social dataset, Exa results, forecasts, or performance metrics are claimed. A future collector must retain UTC timestamps and source URLs, respect a small request rate, deduplicate posts, and report missing author-follower data rather than invent it. Keep only public content and do not commit API keys or scraped datasets to the repository.
 The documented read-only [monthly usage endpoint](https://docs.apify.com/api/v2/users-me-usage-monthly-get) and [limits endpoint](https://docs.apify.com/api/v2/users-me-limits-get) are appropriate for checking an account's allowance before a future run. No social scrape or account-setting change was made.
+
+## 2026-11-14 fix notes (supersedes the "not yet tested" items above)
+
+- **LIHKG — diagnosed, now returns rows.** The earlier zero was a
+  Cloudflare 403: a bare request to `/api_v2/thread/search` returns 403;
+  with `Referer` + `X-Requested-With: XMLHttpRequest` it returns 200 with
+  real items. The collector (`scripts/collect_hk_public.py`) now uses the
+  direct search API (Chinese-name keyword, finance category `cat_id` 15
+  only) plus the finance-category listing (`cat_id=15`, title-filtered).
+  Retention is still thin — the search pool is stale/relevance-ordered and
+  the newest category threads are dominated by US-stock chatter: 2026-11-14
+  run retained 3 LIHKG rows (0005.HK 2, 9988.HK 1); 0700/3690/1299 have
+  zero LIHKG rows. Documented honestly, not widened (the 10-day window is
+  a spec requirement).
+- **Moomoo — plain HTTP works, with quirks.** The stock community page
+  returns the SSR page (with post links) or a 10KB JS shell, varying per
+  request; a browser-like `Accept` header flips it to the shell, so
+  UA-only headers + a 5-attempt retry loop are used. Each linked feed page
+  is fetched for exact publication metadata (`DiscussionForumPosting`
+  JSON-LD `datePublished`). Moomoo's own data can carry hour 24
+  (`2026-11-06T24:55:38+08:00` = midnight next day), handled explicitly.
+  2026-11-14 run: 23 retained rows; 1299.HK (AIA) zero.
+- **Telegram as HK source #2 — ruled out.** Web search 2026-11-14: HK24
+  is a news channel, not a per-ticker discussion feed; the rest are
+  irrelevant, paid or private. Ming Tak (macro) and Stock17168 (Taiwan)
+  were already ruled out above. No Telegram source was used.
+- **Apify Actor — built, locally tested, not yet run.** `apify-actor/`
+  (`cwt-public-finance-sources`) implements all four sources with the
+  proven public endpoints; `python apify-actor/main.py --local-test`
+  exercises the real endpoints without an account. The run
+  (`scripts/run_apify_collection.py`) is blocked on Shiv's
+  `APIFY_API_TOKEN` — allowance check + `--confirm-free-balance` gate.
+- **Exa — scripted, not yet called.** `scripts/run_exa_news.py` (10
+  queries, key-gated, dry-run mode). Blocked on Shiv's `EXA_API_KEY`.
+  The earlier "Exa free credits are USD0" claim was unverified and has
+  been corrected to "no API key available, balance unverified".
+- **Sentiment — hand-labelled check.** 100 real posts labelled by hand
+  (40 Naver, 25 Daum, 20 Moomoo, 3 LIHKG, 12 RSS): 24% accuracy overall
+  (English 53%, Korean 9%, Chinese 33% on n=3). The keyword baseline is
+  not validated for Korean forum text; the sentiment feature stays
+  exploratory-only. Fixture + test: `tests/fixtures/labelled_sentiment_sample.csv`,
+  `tests/test_sentiment_labelled.py`.
+- **Frozen run + prospective check.** `docs/frozen-run-2026-11-14/` ships
+  the 2026-11-14 data + summary + SHA-256 manifest;
+  `scripts/verify_frozen_run.py --reproduce` regenerates the exact MAEs
+  from a clean clone (verified 2026-11-14). Next-session forecasts are
+  frozen for Mon 16 Nov 2026, calendar-verified on both exchanges; check
+  with `scripts/check_next_session.py` after that close
+  (`docs/prospective-check-2026-11-16.md`).

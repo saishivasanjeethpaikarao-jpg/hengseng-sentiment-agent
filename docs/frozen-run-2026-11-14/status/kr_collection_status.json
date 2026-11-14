@@ -1,0 +1,220 @@
+{
+  "collection_started_at_utc": "2026-11-13T19:31:54.327405Z",
+  "collection_finished_at_utc": "2026-11-13T19:32:55.158812Z",
+  "now_utc": "2026-11-13T19:31:54.327405Z",
+  "cutoff_utc": "2026-11-03T19:31:54.327405Z",
+  "window_days": 10,
+  "method": "requests HTTP only; Naver and observed Daum public JSON endpoints; no browser, login, proxy, Apify, Exa, paid API, or secret",
+  "sources": {
+    "naver_finance:005930.KS": {
+      "ticker": "005930.KS",
+      "asset_name": "Samsung Electronics",
+      "source": "naver_finance",
+      "requested_url": "https://m.stock.naver.com/front-api/discussion/list?discussionType=domesticStock&itemCode=005930&pageSize=50&isHolderOnly=false&excludesItemNews=false&isItemNewsOnly=false",
+      "pages_requested": 5,
+      "records_seen": 250,
+      "records_in_window": 250,
+      "usable_timestamp_count": 250,
+      "min_timestamp_utc": "2026-11-13T15:15:59Z",
+      "max_timestamp_utc": "2026-11-13T19:30:55Z",
+      "raw_paths": [
+        "data/raw/kr_public/naver_005930_page1.json",
+        "data/raw/kr_public/naver_005930_page2.json",
+        "data/raw/kr_public/naver_005930_page3.json",
+        "data/raw/kr_public/naver_005930_page4.json",
+        "data/raw/kr_public/naver_005930_page5.json"
+      ],
+      "access_failure": null,
+      "parser_note": "Observed cursor pagination: first request has no offset; subsequent requests pass prior result.lastOffset as offset. Max 5 pages."
+    },
+    "naver_finance:000660.KS": {
+      "ticker": "000660.KS",
+      "asset_name": "SK hynix",
+      "source": "naver_finance",
+      "requested_url": "https://m.stock.naver.com/front-api/discussion/list?discussionType=domesticStock&itemCode=000660&pageSize=50&isHolderOnly=false&excludesItemNews=false&isItemNewsOnly=false",
+      "pages_requested": 5,
+      "records_seen": 250,
+      "records_in_window": 250,
+      "usable_timestamp_count": 250,
+      "min_timestamp_utc": "2026-11-13T15:20:13Z",
+      "max_timestamp_utc": "2026-11-13T19:31:01Z",
+      "raw_paths": [
+        "data/raw/kr_public/naver_000660_page1.json",
+        "data/raw/kr_public/naver_000660_page2.json",
+        "data/raw/kr_public/naver_000660_page3.json",
+        "data/raw/kr_public/naver_000660_page4.json",
+        "data/raw/kr_public/naver_000660_page5.json"
+      ],
+      "access_failure": null,
+      "parser_note": "Observed cursor pagination: first request has no offset; subsequent requests pass prior result.lastOffset as offset. Max 5 pages."
+    },
+    "naver_finance:035420.KS": {
+      "ticker": "035420.KS",
+      "asset_name": "Naver Corporation",
+      "source": "naver_finance",
+      "requested_url": "https://m.stock.naver.com/front-api/discussion/list?discussionType=domesticStock&itemCode=035420&pageSize=50&isHolderOnly=false&excludesItemNews=false&isItemNewsOnly=false",
+      "pages_requested": 5,
+      "records_seen": 250,
+      "records_in_window": 250,
+      "usable_timestamp_count": 250,
+      "min_timestamp_utc": "2026-11-13T09:06:32Z",
+      "max_timestamp_utc": "2026-11-13T18:58:20Z",
+      "raw_paths": [
+        "data/raw/kr_public/naver_035420_page1.json",
+        "data/raw/kr_public/naver_035420_page2.json",
+        "data/raw/kr_public/naver_035420_page3.json",
+        "data/raw/kr_public/naver_035420_page4.json",
+        "data/raw/kr_public/naver_035420_page5.json"
+      ],
+      "access_failure": null,
+      "parser_note": "Observed cursor pagination: first request has no offset; subsequent requests pass prior result.lastOffset as offset. Max 5 pages."
+    },
+    "naver_finance:035720.KS": {
+      "ticker": "035720.KS",
+      "asset_name": "Kakao Corporation",
+      "source": "naver_finance",
+      "requested_url": "https://m.stock.naver.com/front-api/discussion/list?discussionType=domesticStock&itemCode=035720&pageSize=50&isHolderOnly=false&excludesItemNews=false&isItemNewsOnly=false",
+      "pages_requested": 5,
+      "records_seen": 250,
+      "records_in_window": 250,
+      "usable_timestamp_count": 250,
+      "min_timestamp_utc": "2026-11-11T11:59:01Z",
+      "max_timestamp_utc": "2026-11-13T15:25:51Z",
+      "raw_paths": [
+        "data/raw/kr_public/naver_035720_page1.json",
+        "data/raw/kr_public/naver_035720_page2.json",
+        "data/raw/kr_public/naver_035720_page3.json",
+        "data/raw/kr_public/naver_035720_page4.json",
+        "data/raw/kr_public/naver_035720_page5.json"
+      ],
+      "access_failure": null,
+      "parser_note": "Observed cursor pagination: first request has no offset; subsequent requests pass prior result.lastOffset as offset. Max 5 pages."
+    },
+    "naver_finance:005380.KS": {
+      "ticker": "005380.KS",
+      "asset_name": "Hyundai Motor",
+      "source": "naver_finance",
+      "requested_url": "https://m.stock.naver.com/front-api/discussion/list?discussionType=domesticStock&itemCode=005380&pageSize=50&isHolderOnly=false&excludesItemNews=false&isItemNewsOnly=false",
+      "pages_requested": 5,
+      "records_seen": 250,
+      "records_in_window": 250,
+      "usable_timestamp_count": 250,
+      "min_timestamp_utc": "2026-11-13T01:26:14Z",
+      "max_timestamp_utc": "2026-11-13T19:18:12Z",
+      "raw_paths": [
+        "data/raw/kr_public/naver_005380_page1.json",
+        "data/raw/kr_public/naver_005380_page2.json",
+        "data/raw/kr_public/naver_005380_page3.json",
+        "data/raw/kr_public/naver_005380_page4.json",
+        "data/raw/kr_public/naver_005380_page5.json"
+      ],
+      "access_failure": null,
+      "parser_note": "Observed cursor pagination: first request has no offset; subsequent requests pass prior result.lastOffset as offset. Max 5 pages."
+    },
+    "daum_finance:005930.KS": {
+      "ticker": "005930.KS",
+      "asset_name": "Samsung Electronics",
+      "source": "daum_finance",
+      "requested_url": "https://m.finance.daum.net/quotes/A005930/talks",
+      "pages_requested": 5,
+      "records_seen": 150,
+      "records_in_window": 150,
+      "usable_timestamp_count": 150,
+      "min_timestamp_utc": "2026-11-05T05:39:28Z",
+      "max_timestamp_utc": "2026-11-13T11:10:31Z",
+      "raw_paths": [
+        "data/raw/daum_public/daum_005930_page1.json",
+        "data/raw/daum_public/daum_005930_page2.json",
+        "data/raw/daum_public/daum_005930_page3.json",
+        "data/raw/daum_public/daum_005930_page4.json",
+        "data/raw/daum_public/daum_005930_page5.json"
+      ],
+      "access_failure": null,
+      "parser_note": "Observed public Daum JSON endpoint; naive createdAt explicitly interpreted as Asia/Seoul."
+    },
+    "daum_finance:000660.KS": {
+      "ticker": "000660.KS",
+      "asset_name": "SK hynix",
+      "source": "daum_finance",
+      "requested_url": "https://m.finance.daum.net/quotes/A000660/talks",
+      "pages_requested": 3,
+      "records_seen": 90,
+      "records_in_window": 62,
+      "usable_timestamp_count": 62,
+      "min_timestamp_utc": "2026-11-03T20:35:02Z",
+      "max_timestamp_utc": "2026-11-13T10:54:34Z",
+      "raw_paths": [
+        "data/raw/daum_public/daum_000660_page1.json",
+        "data/raw/daum_public/daum_000660_page2.json",
+        "data/raw/daum_public/daum_000660_page3.json"
+      ],
+      "access_failure": null,
+      "parser_note": "Observed public Daum JSON endpoint; naive createdAt explicitly interpreted as Asia/Seoul."
+    },
+    "daum_finance:035420.KS": {
+      "ticker": "035420.KS",
+      "asset_name": "Naver Corporation",
+      "source": "daum_finance",
+      "requested_url": "https://m.finance.daum.net/quotes/A035420/talks",
+      "pages_requested": 1,
+      "records_seen": 30,
+      "records_in_window": 2,
+      "usable_timestamp_count": 2,
+      "min_timestamp_utc": "2026-11-11T23:13:32Z",
+      "max_timestamp_utc": "2026-11-12T02:23:39Z",
+      "raw_paths": [
+        "data/raw/daum_public/daum_035420_page1.json"
+      ],
+      "access_failure": null,
+      "parser_note": "Observed public Daum JSON endpoint; naive createdAt explicitly interpreted as Asia/Seoul."
+    },
+    "daum_finance:035720.KS": {
+      "ticker": "035720.KS",
+      "asset_name": "Kakao Corporation",
+      "source": "daum_finance",
+      "requested_url": "https://m.finance.daum.net/quotes/A035720/talks",
+      "pages_requested": 1,
+      "records_seen": 30,
+      "records_in_window": 1,
+      "usable_timestamp_count": 1,
+      "min_timestamp_utc": "2026-11-07T23:23:24Z",
+      "max_timestamp_utc": "2026-11-07T23:23:24Z",
+      "raw_paths": [
+        "data/raw/daum_public/daum_035720_page1.json"
+      ],
+      "access_failure": null,
+      "parser_note": "Observed public Daum JSON endpoint; naive createdAt explicitly interpreted as Asia/Seoul."
+    },
+    "daum_finance:005380.KS": {
+      "ticker": "005380.KS",
+      "asset_name": "Hyundai Motor",
+      "source": "daum_finance",
+      "requested_url": "https://m.finance.daum.net/quotes/A005380/talks",
+      "pages_requested": 1,
+      "records_seen": 30,
+      "records_in_window": 10,
+      "usable_timestamp_count": 10,
+      "min_timestamp_utc": "2026-11-05T09:29:25Z",
+      "max_timestamp_utc": "2026-11-13T04:23:32Z",
+      "raw_paths": [
+        "data/raw/daum_public/daum_005380_page1.json"
+      ],
+      "access_failure": null,
+      "parser_note": "Observed public Daum JSON endpoint; naive createdAt explicitly interpreted as Asia/Seoul."
+    }
+  },
+  "news_items_excluded": [],
+  "total_records": 1475,
+  "count_by_ticker_source": {
+    "naver_finance:005930.KS": 250,
+    "naver_finance:000660.KS": 250,
+    "naver_finance:035420.KS": 250,
+    "naver_finance:035720.KS": 250,
+    "naver_finance:005380.KS": 250,
+    "daum_finance:005930.KS": 150,
+    "daum_finance:000660.KS": 62,
+    "daum_finance:035420.KS": 2,
+    "daum_finance:035720.KS": 1,
+    "daum_finance:005380.KS": 10
+  }
+}

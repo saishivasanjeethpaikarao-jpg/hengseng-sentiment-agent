@@ -16,6 +16,42 @@ def test_baseline_sentiment_has_expected_signs():
     assert score_sentiment("ordinary words") == 0
 
 
+@pytest.mark.parametrize("text,expected", [
+    # Review probe table: negation and sarcasm must not score +1.00 Bullish.
+    ("not bullish at all", -1.0),
+    ("bullish? yeah right, total scam", 0.0),
+    ("상승하지 않다", -1.0),          # Korean: "not rising"
+    ("不看多", -1.0),                # Chinese: "not bullish"
+    ("利好 出货", 0.0),              # good news + distribution/dump
+    ("never sell, strong buy", 1.0),  # one negation flips one term only
+    ("don't buy this scam", -1.0),
+    ("bullish, not really", -1.0),
+    ("no gains here, total loss", -1.0),
+    ("하락하지 않다", 1.0),          # Korean: "not falling"
+    ("not a crash, it will rebound", 1.0),
+])
+def test_sentiment_negation_flips_the_modified_term(text, expected):
+    assert score_sentiment(text) == pytest.approx(expected, abs=0.01)
+
+
+def test_sentiment_compounds_count_once_not_per_character():
+    # 上涨 must count once, not as 上涨 + 涨.
+    assert score_sentiment("上涨") == pytest.approx(1.0)
+    assert score_sentiment("涨停 大涨") == pytest.approx(1.0)
+    assert score_sentiment("跌停 割肉") == pytest.approx(-1.0)
+
+
+def test_sentiment_list_numbers_do_not_negate():
+    assert score_sentiment("No. 5, buy the dip") > 0
+
+
+def test_sentiment_cantonese_and_korean_retail_slang():
+    assert score_sentiment("蟹貨 散水") < 0
+    assert score_sentiment("떡상 가즈아") > 0
+    assert score_sentiment("사기 조심") < 0
+    assert score_sentiment("물렸다 손절") < 0
+
+
 def test_actor_output_normalizes_to_canonical_schema():
     rows = normalize_social_rows(
         [{"created_at": "2026-10-01T08:30:00Z", "own_text": "看多", "like_count": 3, "views": "1.2K",

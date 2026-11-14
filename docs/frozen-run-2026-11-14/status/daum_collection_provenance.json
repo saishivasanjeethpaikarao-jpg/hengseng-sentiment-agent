@@ -1,0 +1,41 @@
+{
+  "retrieved_at_utc": "2026-11-13T19:32:55.158812Z",
+  "scope": {
+    "tickers": [
+      "005930.KS",
+      "000660.KS",
+      "035420.KS",
+      "035720.KS",
+      "005380.KS"
+    ],
+    "source": "Daum Finance talks",
+    "window": "2026-11-03T19:32:37.172249Z through 2026-11-13T19:32:37.172249Z"
+  },
+  "method": "requests HTTP only; no keys, login, browser, proxy, paid API, Apify, or Exa",
+  "observed_endpoint": "https://m.finance.daum.net/api/home/daum",
+  "observed_page_url": "https://m.finance.daum.net/quotes/A005930/talks",
+  "pagination": {
+    "parameter": "path=/content/debates/A{code}?page={page}&perPage=30&notice=true",
+    "max_pages_per_ticker": 5,
+    "stop_rule": "10-day UTC boundary or max pages",
+    "per_page": 30
+  },
+  "fields": {
+    "likes": "agreeCount",
+    "views": "readCount",
+    "followers": null,
+    "post_id": "id",
+    "text": "title + content sanitized from HTML/entities"
+  },
+  "timestamp_assumption": "Daum createdAt is observed as naive site-local time; interpreted explicitly as Asia/Seoul and converted to UTC. Values with an explicit offset use that offset.",
+  "raw_directory": "data/raw/daum_public",
+  "normalized_csv": "data/normalized/kr_posts.csv",
+  "records_by_ticker": {
+    "daum_finance:005930.KS": 150,
+    "daum_finance:000660.KS": 62,
+    "daum_finance:035420.KS": 2,
+    "daum_finance:035720.KS": 1,
+    "daum_finance:005380.KS": 10
+  },
+  "access_failures": []
+}

@@ -3,16 +3,15 @@
 from __future__ import annotations
 
 import html
-import re
 from pathlib import Path
 
 import pandas as pd
 
 from .features import aggregate_posts, deduplicate_events
+from .levels import community_levels
 from .sentiment import direction_from_score, score_sentiment
 
-SUPPORT_RE = re.compile(r"(?:support|支撑|支撐|지지)[^\d]{0,18}([0-9][0-9,]*(?:\.\d+)?)", re.IGNORECASE)
-RESISTANCE_RE = re.compile(r"(?:resistance|阻力|阻力位|저항)[^\d]{0,18}([0-9][0-9,]*(?:\.\d+)?)", re.IGNORECASE)
+MARKET_CUTOFFS = {"HKEX": "16:10", "KRX": "15:40"}
 LONG_TERMS = ("long", "buy", "bullish", "看多", "看好", "買入", "买入", "매수")
 SHORT_TERMS = ("short", "sell", "bearish", "看空", "沽出", "賣出", "卖出", "매도")
 
@@ -32,23 +31,45 @@ def _position(texts: list[str]) -> str:
     return "Mixed"
 
 
-def _levels(texts: list[str], pattern: re.Pattern) -> str:
-    values = []
-    for text in texts:
-        values.extend(match.replace(",", "") for match in pattern.findall(str(text)))
-    unique = list(dict.fromkeys(values))
-    return ", ".join(unique[:3]) if unique else "Not detected"
+def _levels(texts: list[str], ticker: str, quote_price: float | None, currency: str = "") -> str:
+    """Strict money-only support/resistance levels for one ticker.
+
+    Shared implementation with the offline pipeline (see levels.py): bare
+    numbers such as "Support 22" or "Support 5%" are rejected, so only
+    money-like values near the reference price are reported.
+    """
+    if not texts or quote_price is None:
+        return "Not detected", "Not detected"
+    posts = pd.DataFrame([{"ticker": ticker, "text": t, "url": "", "source": ""}
+                          for t in texts])
+    quotes = pd.DataFrame([{"ticker": ticker, "price": quote_price, "currency": currency}])
+    levels = community_levels(posts, quotes)
+    if levels.empty:
+        return "Not detected", "Not detected"
+    support = levels.loc[levels["kind"].eq("support"), "level"].drop_duplicates().head(3)
+    resistance = levels.loc[levels["kind"].eq("resistance"), "level"].drop_duplicates().head(3)
+    return (", ".join(support) if len(support) else "Not detected",
+            ", ".join(resistance) if len(resistance) else "Not detected")
 
 
-def generate_visual_report(posts: pd.DataFrame, prices: pd.DataFrame, assets: pd.DataFrame,
-                           market: str, timezone: str, output: str | Path) -> Path:
+def _report_rows(posts: pd.DataFrame, prices: pd.DataFrame, assets: pd.DataFrame,
+                 market: str, timezone: str, cutoff: str | None = None) -> list[dict]:
+    """Build the per-ticker rows for the visual report.
+
+    Posts are aggregated with the market cutoff (HKEX 16:10, KRX 15:40 by
+    default) against the price-bar session dates, so a post after the cutoff
+    rolls to the next session instead of counting for a closed one.
+    """
+    cutoff = cutoff or MARKET_CUTOFFS.get(market, "23:59")
     market_assets = assets.loc[assets["market"].eq(market)].copy()
     local_posts = deduplicate_events(posts[posts["ticker"].isin(market_assets["ticker"])].copy(), "timestamp_utc")
+    session_dates = sorted(pd.to_datetime(
+        prices.get("date", pd.Series(dtype=object)), errors="coerce").dropna().dt.strftime("%Y-%m-%d").unique().tolist())
     if not local_posts.empty:
         scores = local_posts.groupby("ticker")["text"].apply(lambda s: s.map(score_sentiment).mean()).to_dict()
         texts_by_ticker = local_posts.groupby("ticker")["text"].apply(list).to_dict()
         sources = local_posts.groupby("ticker")["source"].nunique().to_dict() if "source" in local_posts else {}
-        mentions = aggregate_posts(local_posts, timezone, "23:59")
+        mentions = aggregate_posts(local_posts, timezone, cutoff, session_dates=session_dates or None)
         counts = mentions.groupby("ticker")["post_count"].sum().to_dict() if not mentions.empty else {}
     else:
         scores, texts_by_ticker, sources, counts = {}, {}, {}, {}
@@ -70,12 +91,20 @@ def generate_visual_report(posts: pd.DataFrame, prices: pd.DataFrame, assets: pd
             staleness = int((report_latest_date - latest_bar["_date"]).days) if pd.notna(report_latest_date) else None
         score = float(scores.get(ticker, 0.0))
         texts = texts_by_ticker.get(ticker, [])
+        support, resistance = _levels(texts, ticker, current, str(asset.get("currency", "")))
         rows.append({"ticker": ticker, "asset_name": asset.get("asset_name", ticker), "currency": asset.get("currency", ""),
                      "price": current, "price_date": price_date, "price_staleness_days": staleness,
                      "mentions": int(counts.get(ticker, 0)), "sentiment": score, "direction": direction_from_score(score),
-                     "position": _position(texts), "support": _levels(texts, SUPPORT_RE), "resistance": _levels(texts, RESISTANCE_RE),
+                     "position": _position(texts), "support": support, "resistance": resistance,
                      "sources": int(sources.get(ticker, 0))})
     rows.sort(key=lambda row: (-row["mentions"], -row["sentiment"], row["ticker"]), reverse=False)
+    return rows
+
+
+def generate_visual_report(posts: pd.DataFrame, prices: pd.DataFrame, assets: pd.DataFrame,
+                           market: str, timezone: str, output: str | Path,
+                           cutoff: str | None = None) -> Path:
+    rows = _report_rows(posts, prices, assets, market, timezone, cutoff)
     max_mentions = max([r["mentions"] for r in rows] + [1])
     row_html = []
     for r in rows:

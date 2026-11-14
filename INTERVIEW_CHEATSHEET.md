@@ -17,12 +17,12 @@ Lower mean absolute log-return error (MAE) is better. There is no demonstrated p
 
 ## Data and gaps
 
-- 1,499 social records: 1,475 Korean and 24 Hong Kong; 110 RSS headlines; 4,875 daily price bars; 10 latest-quote snapshots.
+- 1,501 social records: 1,475 Korean and 26 Hong Kong (23 Moomoo + 3 LIHKG); 108 RSS headlines; 4,875 daily price bars; 10 latest-quote snapshots.
 - Korea: Naver has 250 rows per asset; Daum counts are 150, 62, 10, 2 and 1.
-- Hong Kong: Moomoo has 24 total; LIHKG retained zero; AIA has no retained social sample.
-- Author-follower counts are unavailable for all 1,499 rows. Do not describe missing values as zero.
-- The source pulls are bounded latest-page samples, not exhaustive historical archives. Latest quote forecasts have not yet been evaluated.
-- No Apify Actor or Exa query was used. Local public collectors and RSS are substitutes, not completed provider integrations.
+- Hong Kong: Moomoo has 23 total; LIHKG retained 3 (only 0005.HK and 9988.HK covered); AIA has no retained social sample.
+- Author-follower counts are unavailable for all 1,501 rows. Do not describe missing values as zero.
+- The source pulls are bounded latest-page samples, not exhaustive historical archives. Latest quote forecasts have not yet been evaluated — a genuinely prospective check is frozen for Mon 16 Nov 2026 (see `docs/prospective-check-2026-11-16.md`).
+- No Apify Actor run or Exa query has happened yet. The Actor is built and locally tested (`apify-actor/`), the Exa pull is scripted (`scripts/run_exa_news.py`); both are blocked on Shiv's keys. Local public collectors and RSS are substitutes, not completed provider integrations.
 
 ## Leakage answer
 

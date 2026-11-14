@@ -1,0 +1,21 @@
+ticker,date,close,predicted_return,predicted_close,market,model,basis,predicted_simple_return_pct
+0005.HK,2026-11-13,139.9,1.694486737227988e-05,139.90237060703012,HKEX,price-only benchmark,provisional latest quote; next exchange session date not independently calendar-verified,0.001694501093735591
+0700.HK,2026-11-13,386.6,0.0018053315737014046,387.2985715733186,HKEX,price-only benchmark,provisional latest quote; next exchange session date not independently calendar-verified,0.1806962165852429
+1299.HK,2026-11-13,77.75,0.0007256236978088016,77.8064377163005,HKEX,price-only benchmark,provisional latest quote; next exchange session date not independently calendar-verified,0.07258870263728431
+3690.HK,2026-11-13,69.8,0.0023489554100282403,69.96414980242724,HKEX,price-only benchmark,provisional latest quote; next exchange session date not independently calendar-verified,0.23517163671525537
+9988.HK,2026-11-13,90.55,0.002479388302299293,90.77478716295029,HKEX,price-only benchmark,provisional latest quote; next exchange session date not independently calendar-verified,0.24824645273361562
+000660.KS,2026-11-13,1216000.0,0.001453970535118589,1217769.3141243076,KRX,price-only benchmark,provisional latest quote; next exchange session date not independently calendar-verified,0.1455028062752985
+005380.KS,2026-11-13,269500.0,0.0018391319192168076,269996.10211100784,KRX,price-only benchmark,provisional latest quote; next exchange session date not independently calendar-verified,0.18408241595836913
+005930.KS,2026-11-13,206000.0,0.0014493702295436254,206298.7867412854,KRX,price-only benchmark,provisional latest quote; next exchange session date not independently calendar-verified,0.14504210742010984
+035420.KS,2026-11-13,172500.0,0.0030851588153812774,173033.0116857276,KRX,price-only benchmark,provisional latest quote; next exchange session date not independently calendar-verified,0.30899228158121467
+035720.KS,2026-11-13,31700.0,0.0024667032953702385,31778.291015118113,KRX,price-only benchmark,provisional latest quote; next exchange session date not independently calendar-verified,0.24697481109814562
+0005.HK,2026-11-13,139.9,0.016178325717378254,142.18175549129884,HKEX,experimental short-window sentiment,tiny recent sample; provisional latest quote; no validated edge,1.6309903440306233
+0700.HK,2026-11-13,386.6,0.02398183630894645,395.9834443102478,HKEX,experimental short-window sentiment,tiny recent sample; provisional latest quote; no validated edge,2.4271713166703965
+1299.HK,2026-11-13,77.75,0.03316054574972365,80.37145668605233,HKEX,experimental short-window sentiment,tiny recent sample; provisional latest quote; no validated edge,3.3716484708068504
+3690.HK,2026-11-13,69.8,0.033675321483309595,72.19056301926544,HKEX,experimental short-window sentiment,tiny recent sample; provisional latest quote; no validated edge,3.424875385767094
+9988.HK,2026-11-13,90.55,0.050986241336628324,95.28652696252684,HKEX,experimental short-window sentiment,tiny recent sample; provisional latest quote; no validated edge,5.230841482635926
+000660.KS,2026-11-13,1216000.0,-0.013535107392170773,1199652.1936430205,KRX,experimental short-window sentiment,tiny recent sample; provisional latest quote; no validated edge,-1.3443919701463465
+005380.KS,2026-11-13,269500.0,0.022787228982930452,275711.6627156975,KRX,experimental short-window sentiment,tiny recent sample; provisional latest quote; no validated edge,2.3048841245630594
+005930.KS,2026-11-13,206000.0,0.02593285577932259,211412.03981230402,KRX,experimental short-window sentiment,tiny recent sample; provisional latest quote; no validated edge,2.6272037923806018
+035420.KS,2026-11-13,172500.0,-0.030543856555502714,167310.83669369319,KRX,experimental short-window sentiment,tiny recent sample; provisional latest quote; no validated edge,-3.0082106123517782
+035720.KS,2026-11-13,31700.0,0.04870895385899157,33282.297024573214,KRX,experimental short-window sentiment,tiny recent sample; provisional latest quote; no validated edge,4.991473263637895

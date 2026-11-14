@@ -113,7 +113,7 @@ def main() -> int:
         "method": "Yahoo Finance chart endpoint GET range=1mo interval=1d; metadata snapshot only",
         "endpoint": ENDPOINT, "concurrency": CONCURRENCY, "assets_requested": len(assets),
         "assets_succeeded": len(rows), "total_records": len(rows),
-        "explicit_no_exa_compliance": "Exa and Apify were not called; no keys, login, or paid service used.",
+        "explicit_no_exa_compliance": "Exa and Apify were not called: no API keys are available in this environment and the free-credit balances are unverified; see DATA_ACCESS.md.",
         "historical_prices_untouched": True, "provisional_quote_note": "These post-close metadata quotes may later be labelled provisional outcome checks; they are not official daily closes.",
         "assets": status_assets, "failures": [x for x in status_assets if x["status_code"] != 200 or x["errors"]]}
     (NORMALIZED_DIR / "quote_collection_status.json").write_text(json.dumps(status, ensure_ascii=False, indent=2), encoding="utf-8")

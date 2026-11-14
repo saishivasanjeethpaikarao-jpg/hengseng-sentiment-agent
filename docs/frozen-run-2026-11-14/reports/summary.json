@@ -1,0 +1,112 @@
+{
+  "run_utc": "2026-11-13T19:40:40.135491+00:00",
+  "prices_rows": 4875,
+  "prices_date_start": "2024-11-14",
+  "daily_bar_latest_date": "2026-11-12",
+  "posts": 1501,
+  "post_duplicates_removed": 0,
+  "news": 108,
+  "quote_snapshots": 10,
+  "quote_daily_closes_missing": 10,
+  "missing_followers": 1501,
+  "spend_usd": 0,
+  "exa_called": false,
+  "apify_run": false,
+  "missing_telemetry": {
+    "likes": 12,
+    "reposts": 1501,
+    "views": 16,
+    "author_followers": 1501
+  },
+  "timezone_assumptions": "Naive Naver/Daum site timestamps were explicitly interpreted as Asia/Seoul; source-clock accuracy was not independently certified.",
+  "models": {
+    "HKEX": {
+      "price_only_oos": {
+        "n_test": 1940,
+        "test_dates": 388,
+        "test_start": "2025-04-16",
+        "test_end": "2026-11-11",
+        "mae_return": 0.016389968457280746,
+        "zero_baseline_mae": 0.0162728036513847,
+        "directional_accuracy": 0.47525773195876286,
+        "model": "pooled Ridge alpha=1; price-only",
+        "features": [
+          "return_1d",
+          "return_5d",
+          "volatility_5d"
+        ],
+        "warning": "This long history validates price features only, not a sentiment edge."
+      },
+      "short_sentiment_experiment": {
+        "feature_start": "2026-11-04",
+        "sessions": 7,
+        "social_observed_rows": 12,
+        "social_observed_dates": 7,
+        "status": "exploratory only; too few sessions for a reliable edge claim",
+        "warning": "Bounded retrospective sample; missing collection is not neutral. Text editing/survivorship and incomplete source coverage remain.",
+        "metrics": {
+          "n_test": 15,
+          "test_dates": 3,
+          "test_start": "2026-11-09",
+          "test_end": "2026-11-11",
+          "mae_return": 0.06663142712568378,
+          "zero_baseline_mae": 0.019267366528994,
+          "directional_accuracy": 0.4
+        },
+        "paired_price_only_metrics": {
+          "n_test": 15,
+          "test_dates": 3,
+          "test_start": "2026-11-09",
+          "test_end": "2026-11-11",
+          "mae_return": 0.05321476841127363,
+          "zero_baseline_mae": 0.019267366528994,
+          "directional_accuracy": 0.26666666666666666
+        }
+      }
+    },
+    "KRX": {
+      "price_only_oos": {
+        "n_test": 1900,
+        "test_dates": 380,
+        "test_start": "2025-04-18",
+        "test_end": "2026-11-11",
+        "mae_return": 0.02707120584851567,
+        "zero_baseline_mae": 0.02695012563095802,
+        "directional_accuracy": 0.48526315789473684,
+        "model": "pooled Ridge alpha=1; price-only",
+        "features": [
+          "return_1d",
+          "return_5d",
+          "volatility_5d"
+        ],
+        "warning": "This long history validates price features only, not a sentiment edge."
+      },
+      "short_sentiment_experiment": {
+        "feature_start": "2026-11-04",
+        "sessions": 7,
+        "social_observed_rows": 20,
+        "social_observed_dates": 7,
+        "status": "exploratory only; too few sessions for a reliable edge claim",
+        "warning": "Bounded retrospective sample; missing collection is not neutral. Text editing/survivorship and incomplete source coverage remain.",
+        "metrics": {
+          "n_test": 15,
+          "test_dates": 3,
+          "test_start": "2026-11-09",
+          "test_end": "2026-11-11",
+          "mae_return": 0.04781115987779779,
+          "zero_baseline_mae": 0.02581448752156991,
+          "directional_accuracy": 0.6
+        },
+        "paired_price_only_metrics": {
+          "n_test": 15,
+          "test_dates": 3,
+          "test_start": "2026-11-09",
+          "test_end": "2026-11-11",
+          "mae_return": 0.04903299899631078,
+          "zero_baseline_mae": 0.02581448752156991,
+          "directional_accuracy": 0.4666666666666667
+        }
+      }
+    }
+  }
+}

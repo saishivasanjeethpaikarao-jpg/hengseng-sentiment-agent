@@ -1,0 +1,33 @@
+{
+  "retrieved_at_utc": "2026-11-13T19:32:55.158812Z",
+  "scope": {
+    "tickers": [
+      "005930.KS",
+      "000660.KS",
+      "035420.KS",
+      "035720.KS",
+      "005380.KS"
+    ],
+    "sources": [
+      "Naver Finance",
+      "Daum Finance"
+    ],
+    "window": "2026-11-03T19:31:54.327405Z through 2026-11-13T19:31:54.327405Z"
+  },
+  "method": "requests HTTP only; observed public Naver JSON endpoint; no browser, login, proxy, Apify, Exa, paid API, or secret",
+  "observed_routes": {
+    "naver": "https://m.stock.naver.com/front-api/discussion/list",
+    "daum_page": "https://m.finance.daum.net/quotes/A{}/talks",
+    "daum_api": "https://m.finance.daum.net/api/home/daum"
+  },
+  "pagination": {
+    "naver": "offset=prior result.lastOffset, max 5 pages/ticker, 0.55s delay",
+    "daum": "path=/content/debates/A{code}?page={page}&perPage=30&notice=true; max 5 pages/ticker; 0.55s delay"
+  },
+  "raw_evidence": "data/raw/kr_public/ and data/raw/daum_public/",
+  "normalized_csv": "data/normalized/kr_posts.csv",
+  "blockers": [],
+  "resolved_notes": [
+    "Daum Finance talks collected from the observed public API endpoint; see daum_collection_status.json and daum_collection_provenance.json."
+  ]
+}

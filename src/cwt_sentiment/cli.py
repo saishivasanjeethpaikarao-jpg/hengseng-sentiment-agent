@@ -83,6 +83,8 @@ def build_parser() -> argparse.ArgumentParser:
     report.add_argument("--assets", required=True)
     report.add_argument("--market", required=True)
     report.add_argument("--timezone", required=True)
+    report.add_argument("--cutoff", default=None,
+                        help="Local HH:MM prediction cutoff; defaults to the market cutoff (HKEX 16:10, KRX 15:40)")
     report.add_argument("--out", required=True)
     return parser
 
@@ -157,7 +159,8 @@ def main(argv: list[str] | None = None) -> int:
         posts = _read_optional_csv(args.posts, ["ticker", "source", "timestamp_utc", "text"])
         prices = pd.read_csv(args.prices)
         assets = pd.read_csv(args.assets)
-        result = generate_visual_report(posts, prices, assets, args.market, args.timezone, args.out)
+        result = generate_visual_report(posts, prices, assets, args.market, args.timezone, args.out,
+                                        cutoff=args.cutoff)
         print(f"HTML report: {result}")
     return 0
 
