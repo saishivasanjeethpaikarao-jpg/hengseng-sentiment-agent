@@ -43,27 +43,33 @@ def _sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def verify_manifest() -> list[str]:
-    """Return a list of problems (empty = manifest matches)."""
+def verify_manifest(pkg: Path | None = None) -> list[str]:
+    """Return a list of problems (empty = manifest matches).
+
+    Defaults to the 2026-11-14 package; pass a package dir to check another
+    frozen run (e.g. docs/frozen-run-2026-11-16).
+    """
+    pkg = pkg or PKG
+    manifest = pkg / "MANIFEST.sha256"
     problems: list[str] = []
-    if not MANIFEST.exists():
+    if not manifest.exists():
         return ["MANIFEST.sha256 is missing"]
     listed: set[str] = set()
-    for line in MANIFEST.read_text(encoding="utf-8").splitlines():
+    for line in manifest.read_text(encoding="utf-8").splitlines():
         if not line.strip():
             continue
         digest, rel = line.split(None, 1)
         rel = rel.lstrip("*")
         listed.add(rel)
-        path = PKG / rel
+        path = pkg / rel
         if not path.exists():
             problems.append(f"missing file: {rel}")
         elif _sha256(path) != digest:
             problems.append(f"hash mismatch: {rel}")
     # Files present but not in the manifest.
-    for path in sorted(PKG.rglob("*")):
+    for path in sorted(pkg.rglob("*")):
         if path.is_file() and path.name != "MANIFEST.sha256":
-            rel = str(path.relative_to(PKG))
+            rel = str(path.relative_to(pkg))
             if rel not in listed:
                 problems.append(f"unlisted file: {rel}")
     return problems

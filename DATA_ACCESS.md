@@ -15,28 +15,28 @@ The real-run outputs and source-status JSON files are authoritative. A reachable
 
 Public entry pages: [LIHKG](https://lihkg.com/category/15), [Moomoo](https://www.moomoo.com/stock/00700-HK/community), [Naver](https://m.stock.naver.com/domestic/stock/005930/discussion), [Daum](https://m.finance.daum.net/quotes/A005930/talks), [Google News](https://news.google.com/), [Yahoo chart](https://query1.finance.yahoo.com/v8/finance/chart/0700.HK?range=1mo&interval=1d).
 
-## Required-tool gap
+## Required tools — run on 2026-11-16
 
-**No Apify Actor run has happened yet — but the Actor now exists.**
-`apify-actor/` contains a custom Actor (`cwt-public-finance-sources`) built
-from `config/apify_input.json`, with the same public-endpoint fetch logic
-the local collectors proved (LIHKG search API + category listing with
-browser headers, Moomoo feed pages, Naver discussion API, Daum debates
-API). Its fetch logic was tested locally against the real endpoints on
-2026-11-14 (`python apify-actor/main.py --local-test`). What is still
-missing: an Actor created in Shiv's Apify account and one run — that needs
-Shiv's `APIFY_API_TOKEN`. Run it with `scripts/run_apify_collection.py`
-(allowance check first, `--confirm-free-balance` gate); it records the
-Actor ID, run ID, dataset and run log in `data/apify/<run_id>/`. Until
-then, Actor IDs remain null and the submission cannot claim Apify use.
+**Apify Actor ran on 2026-11-16.** `apify-actor/` contains a custom Actor
+(`cwt-public-finance-sources`, ID `0jwqlJJLDge2NcQ1x`) built from
+`config/apify_input.json`, with the same public-endpoint fetch logic the
+local collectors proved (LIHKG search API + category listing with browser
+headers, Moomoo feed pages, Naver discussion API, Daum debates API). Its
+fetch logic was tested locally against the real endpoints on 2026-11-14
+(`python apify-actor/main.py --local-test`). Run `nl0xo2ot0DVeCq2nu`
+(SUCCEEDED 2026-11-16, 0.249 compute units, about $0.05) returned 644
+rows: Naver 500 (capped at 100 per ticker), Daum 140, LIHKG 4, Moomoo 0.
+Run it with `scripts/run_apify_collection.py` (allowance check first,
+`--confirm-free-balance` gate); it records the Actor ID, run ID, dataset
+and run log in `data/apify/<run_id>/`.
 
-**No Exa request was made.** `scripts/run_exa_news.py` is written and
-key-gated (10 queries, one per ticker, dry-run mode, refuses without
-`--confirm-free-balance-and-auto-recharge-off`). RSS news is clearly
-labelled as a replacement, not passed off as Exa output. The call needs
-Shiv's `EXA_API_KEY`; obtain evaluator acceptance of the substitute or a
-verified, authorised free Exa allowance before calling the requirement
-complete.
+**Exa request made on 2026-11-16.** `scripts/run_exa_news.py` is key-gated
+(10 queries, one per ticker, dry-run mode, refuses without
+`--confirm-free-balance-and-auto-recharge-off`). It returned 80 headlines
+(8 per ticker, last 10 days); request log in `data/exa/exa_request_log.json`
+and rows in `data/exa/exa_news.csv`. RSS news from the 14 November frozen
+run is retained alongside the Exa headlines and is clearly labelled, not
+passed off as Exa output.
 
 The external data-provider spend cap is **USD 0**. No paid Store Actor, paid proxy, subscription, auto-recharge setting change or paid API call was authorised. A provider’s advertised free tier is not evidence of the current account’s remaining allowance. Account-specific balances and credentials are not included in this public project.
 

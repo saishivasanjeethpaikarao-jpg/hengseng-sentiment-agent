@@ -215,7 +215,7 @@ cwt-sentiment forecast --help
 
 **Did you use Apify and Exa?** Not in this zero-cost run. The adapters exist, but local public collection/RSS were used and documented. Actual Actor IDs/run logs and an approved Exa route remain compliance gaps.
 
-**Did sentiment improve predictions?** The tiny sentiment runs beat the same-window price-only Ridge runs but lost to no change, on only three test dates. That does not establish a durable edge. The longer price-only models also lost to no change.
+**Did sentiment improve predictions?** The tiny sentiment runs beat the same-window price-only Ridge runs but lost to no change, on only six test dates. That does not establish a durable edge. The longer price-only models also lost to no change.
 
 **What would you improve first?** Source/tool compliance, longer timestamped social history, official-quality daily close data and calendar checks, a hand-labelled multilingual sentiment benchmark, then robust paired model tests. More complexity comes later.
 

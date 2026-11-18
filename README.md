@@ -2,18 +2,18 @@
 
 A Python research project testing whether public investor discussion adds information about the **next trading session's return** for five Hong Kong and five Korean stocks. It focuses on clear data handling, market-time alignment, leakage-aware evaluation, and honest reporting—not on claiming a profitable strategy.
 
-> **Read this before interpreting the charts:** the frozen run cost **$0** in external data-provider spend. **No Apify Actor was run and no Exa request was made** — both are built and key-gated, but they need Shiv's Apify token / Exa key (see `SUBMISSION_EMAIL.md`). Public collectors and Google News RSS were documented substitutes; this is a working prototype, **not a fully assignment-compliant submission**. The simple baselines were not beaten, and no predictive edge is established.
+> **Read this before interpreting the charts:** the 16 November 2026 run cost **$0.05** in Apify spend (Exa spend not measurable via API). **The Apify Actor ran** (cwt-public-finance-sources, run nl0xo2ot0DVeCq2nu, 644 social records) **and Exa returned 80 headlines** across 10 queries, both under Sai Shiva Sanjeeth Paikarao's own accounts (see `SUBMISSION_EMAIL.md`). The 14 November frozen run used public collectors and Google News RSS as substitutes. The simple baselines were not beaten, and no predictive edge is established.
 
 ## At a glance
 
 | | What the project contains or found |
 |---|---|
 | Universe | 10 equities: five HKEX and five KRX tickers |
-| Frozen data run | 1,501 retained public social records, 108 RSS headlines, 4,875 daily bars, and 10 separate quote snapshots — frozen in `docs/frozen-run-2026-11-14/` with a SHA-256 manifest; `python scripts/verify_frozen_run.py --reproduce` regenerates the exact MAEs from a clean clone |
+| Frozen data run | 1,990 retained public social records, 188 headlines (108 RSS + 80 Exa), 4,875 daily bars, and 10 separate quote snapshots — frozen in `docs/frozen-run-2026-11-16/` with a SHA-256 manifest (the 14 November run is kept in `docs/frozen-run-2026-11-14/`); `python scripts/verify_frozen_run.py --reproduce` regenerates the 14 November MAEs from a clean clone |
 | Main test | Four expanding chronological folds; Ridge regression compared with predicting a zero return |
 | Main result | The long-history price-only model had slightly higher MAE than the zero-return baseline in both markets |
-| Sentiment result | The exploratory sentiment test had only 15 rows across 3 test dates per market; it also lost to the zero-return baseline. Hand-labelled check on 100 real posts: 24% accuracy (English 53%, Korean 9%) — the keyword scorer is not a validated signal |
-| Spend and provider status | $0 external spend; Apify Actor built + locally tested (`apify-actor/`, run script `scripts/run_apify_collection.py`) and Exa pull scripted (`scripts/run_exa_news.py`) — neither has run yet; both are blocked on Shiv's keys |
+| Sentiment result | The exploratory sentiment test had only 30 rows across 6 test dates per market; it also lost to the zero-return baseline. Hand-labelled check on 100 real posts: 24% accuracy (English 53%, Korean 9%) — the keyword scorer is not a validated signal |
+| Spend and provider status | $0.05 Apify spend (Actor run nl0xo2ot0DVeCq2nu, 2026-11-16); Exa pull ran the same day (10 queries, 80 headlines). Both use Sai Shiva Sanjeeth Paikarao's own accounts; the Actor (`apify-actor/`) and Exa script (`scripts/run_exa_news.py`) are in the repo |
 | Prospective check | Next-session forecasts frozen for Mon 16 Nov 2026 (calendar-verified on both exchanges); check with `python scripts/check_next_session.py` after that close — see `docs/prospective-check-2026-11-16.md` |
 
 **Quick links:** [run results](RUN_RESULTS.md) · [learning and code guide](LEARNING_GUIDE.md) · [interview cheat sheet](INTERVIEW_CHEATSHEET.md) · [interactive study pack](INTERVIEW_STUDY_PACK.html) *(download and open locally; GitHub does not execute repository HTML)* · [data-source notes](DATA_ACCESS.md) · [implementation plan](IMPLEMENTATION_PLAN.md)
@@ -22,9 +22,9 @@ A Python research project testing whether public investor discussion adds inform
 
 The charts below are project-generated from the frozen aggregate run and retained-record counts. They contain aggregate metrics only; they do not expose individual post text or credentials.
 
-![Two-panel comparison of long-history price-only MAE and the three-date sentiment pilot, with sample sizes and zero-return baselines labeled.](docs/frozen-run-mae-comparison.png)
+![Two-panel comparison of long-history price-only MAE and the six-date sentiment pilot, with sample sizes and zero-return baselines labeled.](docs/frozen-run-mae-comparison.png)
 
-*Lower MAE is better. Read the printed values: the two panels use different vertical scales. In the long-history price-only test, Ridge is slightly worse than “no change.” In the tiny sentiment pilot, sentiment Ridge is better than its paired price-only Ridge, but both are worse than “no change.” Three test dates are far too few to claim a sentiment edge.*
+*Lower MAE is better. Read the printed values: the two panels use different vertical scales. In the long-history price-only test, Ridge is slightly worse than “no change.” In the tiny sentiment pilot, sentiment Ridge is better than its paired price-only Ridge, but both are worse than “no change.” Six test dates are far too few to claim a sentiment edge.*
 
 ![Frozen-run price-only errors and bounded social-record coverage by ticker and source.](docs/real-data-evaluation.png)
 
@@ -36,15 +36,15 @@ Mean absolute error (MAE) is measured on **log returns**; lower is better. The d
 
 | Market and test | Ridge MAE | Zero-return MAE | Test sample | Ridge directional accuracy |
 |---|---:|---:|---:|---:|
-| HKEX price-only, long history | 1.639% | **1.627%** | 1,940 rows · 388 dates | 47.5% |
-| KRX price-only, long history | 2.707% | **2.695%** | 1,900 rows · 380 dates | 48.5% |
+| HKEX price-only, long history | 1.638% | **1.628%** | 1,940 rows · 388 dates | 47.1% |
+| KRX price-only, long history | 2.719% | **2.704%** | 1,900 rows · 380 dates | 48.1% |
 
 | Short sentiment experiment | Sentiment Ridge MAE | Paired price-only Ridge MAE | Zero-return MAE | Test sample |
 |---|---:|---:|---:|---:|
-| HKEX | 4.563% | 5.321% | **1.927%** | 15 rows · 3 dates |
-| KRX | 4.502% | 4.903% | **2.581%** | 15 rows · 3 dates |
+| HKEX | 9.452% | 10.796% | **1.922%** | 30 rows · 6 dates |
+| KRX | 10.758% | 8.779% | **2.353%** | 30 rows · 6 dates |
 
-The long-history results are **price-only**; they are not a long-history social-sentiment backtest. The short experiment covers only seven observed feature sessions and three held-out dates per market. Its lower error than the paired price-only model is not enough evidence that sentiment adds durable predictive value. No transaction costs, slippage, liquidity, portfolio risk, or live-trading performance are established. Full metric context is in [RUN_RESULTS.md](RUN_RESULTS.md).
+The long-history results are **price-only**; they are not a long-history social-sentiment backtest. The short experiment covers only nine observed feature sessions and six held-out dates per market. Its lower error than the paired price-only model is not enough evidence that sentiment adds durable predictive value. No transaction costs, slippage, liquidity, portfolio risk, or live-trading performance are established. Full metric context is in [RUN_RESULTS.md](RUN_RESULTS.md).
 
 ## Project scope and stock universe
 
@@ -151,21 +151,21 @@ The run's normalized rows and detailed `reports/real_run/` outputs are intention
 
 | Dataset | Frozen-run count | What the count does—and does not—mean |
 |---|---:|---|
-| Social records | 1,501 | 1,250 Naver Finance, 225 Daum Finance, 23 Moomoo, 3 LIHKG; bounded retained samples |
-| LIHKG | 3 retained | LIHKG now returns rows via the direct search API (bare requests 403 on Cloudflare; browser headers required) — still thin: only 0005.HK and 9988.HK covered |
-| News | 108 headlines | Google News RSS substitute; headline-only, not Exa or full-article analysis |
-| Daily price bars | 4,875 | Yahoo chart data, not certified exchange closes; dates run 2024-11-14 to 2026-11-12 |
+| Social records | 1,990 | 1,750 Naver Finance, 365 Daum Finance, 23 Moomoo, 7 LIHKG (file counts; 1,711 + 250 + 23 + 6 after dedup); bounded retained samples |
+| LIHKG | 7 retained | LIHKG now returns rows via the direct search API (bare requests 403 on Cloudflare; browser headers required) — still thin: only 0005.HK, 0700.HK and 9988.HK covered |
+| News | 188 headlines | 108 Google News RSS + 80 Exa headlines; headline-only, not full-article analysis |
+| Daily price bars | 4,875 | Yahoo chart data, not certified exchange closes; dates run 2024-11-18 to 2026-11-16 |
 | Latest quote snapshots | 10 | Separate provisional snapshots; corresponding latest daily close fields were missing |
-| Author followers | 0 observed | All 1,501 values were unavailable, not observed zeros |
-| External data-provider spend | $0 | No paid API, proxy, or Actor run was used |
+| Author followers | 0 observed | All 1,990 values were unavailable, not observed zeros |
+| External data-provider spend | $0.05 Apify | One Apify Actor run (0.249 compute units); no paid proxy; Exa spend not measurable via API |
 
-Coverage is uneven: the Hong Kong sample has 23 Moomoo records across four tickers plus 3 LIHKG rows, and no AIA social sample. Korean collection is dominated by bounded Naver samples. Some board items are titles rather than complete threads; source clocks and historical coverage are not independently certified. The run also had unavailable repost counts for all 1,501 records, likes for 12, views for 16, and author followers for all records.
+Coverage is uneven: the Hong Kong sample has 23 Moomoo records across four tickers plus 7 LIHKG rows, and no AIA social sample. Korean collection is dominated by bounded Naver samples (capped at 100 posts per ticker by the Actor). Some board items are titles rather than complete threads; source clocks and historical coverage are not independently certified. The run also had unavailable repost counts for all 1,990 records, likes for 12, views for 19, and author followers for all records.
 
-**Provider requirement status:** no Exa request was made and no Apify Actor run has happened yet — both are blocked on Shiv's keys, not on the code: the Actor is built and locally tested (`apify-actor/`, run via `scripts/run_apify_collection.py`) and the Exa pull is scripted (`scripts/run_exa_news.py`). Do not say the named provider requirements were met. Full route/provenance notes and public source links are in [DATA_ACCESS.md](DATA_ACCESS.md).
+**Provider requirement status:** the Apify Actor ran on 2026-11-16 (run nl0xo2ot0DVeCq2nu, 644 records) and the Exa search ran the same day (10 queries, 80 headlines), both under Sai Shiva Sanjeeth Paikarao's own accounts — the named provider requirements are met for this run. The Actor is in `apify-actor/` (run via `scripts/run_apify_collection.py`) and the Exa pull is `scripts/run_exa_news.py`. Full route/provenance notes and public source links are in [DATA_ACCESS.md](DATA_ACCESS.md).
 
 ## Run the code
 
-Python 3.10 or later is required. The repository does **not** include normalized records or row-level outputs, so a clean clone can install the code and run tests, but first needs locally collected data before it can recreate the offline analysis.
+Python 3.10 or later is required. The repository ships the frozen normalized records in `docs/frozen-run-2026-11-14/data/` and `docs/frozen-run-2026-11-16/data/`; a clean clone can recreate the offline analysis from those, or collect fresh data with the scripts below.
 
 ```bash
 git clone https://github.com/saishivasanjeethpaikarao-jpg/hengseng-sentiment-agent.git
@@ -192,20 +192,20 @@ python scripts/run_real_pipeline.py
 
 The Hong Kong browser collector may require Chromium: `python -m playwright install chromium`. The analysis runner is offline once local normalized inputs exist. These commands do not use Apify or Exa. Do not run those provider adapters unless their current charges/allowances are verified and provider usage is explicitly authorized. To regenerate the second README chart from a local summary, run `python scripts/render_readme_mae_chart.py`.
 
-The public collectors can produce a different sample on a later date. Exact reproduction of the frozen numbers requires the exact frozen input data, which is not included in this public repository. See [DATA_ACCESS.md](DATA_ACCESS.md) for schemas and [LEARNING_GUIDE.md](LEARNING_GUIDE.md) for a longer practice walkthrough.
+The public collectors can produce a different sample on a later date. Exact reproduction of the frozen numbers uses the frozen input data shipped in `docs/frozen-run-2026-11-14/data/` (14 November) and `docs/frozen-run-2026-11-16/data/` (16 November). See [DATA_ACCESS.md](DATA_ACCESS.md) for schemas and [LEARNING_GUIDE.md](LEARNING_GUIDE.md) for a longer practice walkthrough.
 
 ## How to describe the project in an interview
 
-> “I built a Python pipeline to test whether public investor discussion adds value to next-session forecasts across five Hong Kong and five Korean stocks. It aligns events to exchange cutoffs and evaluates Ridge with four expanding date-based folds and a one-session purge. In the long price-only tests, no-change was slightly better: HKEX MAE was 1.627% versus 1.639%, and KRX was 2.695% versus 2.707%. That result sets my next step: improve the social history and test a larger sentiment sample under the same protocol.”
+> “I built a Python pipeline to test whether public investor discussion adds value to next-session forecasts across five Hong Kong and five Korean stocks. It aligns events to exchange cutoffs and evaluates Ridge with four expanding date-based folds and a one-session purge. In the long price-only tests, no-change was slightly better: HKEX MAE was 1.628% versus 1.638%, and KRX was 2.704% versus 2.719%. That result sets my next step: improve the social history and test a larger sentiment sample under the same protocol.”
 
 **Walkthrough:** trace one event from timestamp and cutoff, through the next-session label and purge, to the baseline comparison. The flowcharts above show that path.
 
 ## Limitations and provider status
 
-- **Provider compliance:** external data-provider spend was $0. No Apify Actor run or Exa request has happened yet — both are built and key-gated, blocked on Shiv's keys; bounded public collectors and Google News RSS were substitutes, so the named-provider requirement remains unmet.
-- **Coverage:** the run retained 1,501 social records overall but only 23 Hong Kong Moomoo records plus 3 LIHKG rows, and no AIA social sample. Korean coverage is uneven and the collections are bounded—not complete historical archives.
-- **Evidence:** the long-history evaluation is price-only, and the zero-return baseline slightly beat Ridge in both markets. The sentiment pilot has only three held-out dates per market; it does not establish a sentiment edge or profitable strategy.
-- **Market data and timing:** Yahoo bars are not certified exchange closes. All 10 latest daily-close fields were missing, so separate quote snapshots are provisional. The next session (Mon 16 Nov 2026) is calendar-verified on both exchanges for the prospective check; historical source clocks and local cutoffs are documented per run.
+- **Provider compliance:** external data-provider spend was $0.05 (Apify run nl0xo2ot0DVeCq2nu, 2026-11-16) plus unmeasured Exa spend. The Apify Actor ran and the Exa search ran, both under Sai Shiva Sanjeeth Paikarao's own accounts, so the named-provider requirement is met for this run; bounded public collectors and Google News RSS from the 14 November frozen run are retained alongside the new data.
+- **Coverage:** the run retained 1,990 social records overall but only 23 Hong Kong Moomoo records plus 7 LIHKG rows, and no AIA social sample. Moomoo returned zero posts in the Apify run. Korean coverage is uneven and the collections are bounded—not complete historical archives.
+- **Evidence:** the long-history evaluation is price-only, and the zero-return baseline slightly beat Ridge in both markets. The sentiment pilot has only six held-out dates per market; it does not establish a sentiment edge or profitable strategy.
+- **Market data and timing:** Yahoo bars are not certified exchange closes. All 10 latest daily-close fields were missing, so separate quote snapshots are provisional. The 14 November frozen forecasts are for Mon 16 Nov 2026 (calendar-verified on both exchanges) and are checked after that close; the 16 November run's forecasts are for Tue 17 Nov 2026. Historical source clocks and local cutoffs are documented per run.
 
 Detailed source and evaluation notes are in [DATA_ACCESS.md](DATA_ACCESS.md) and [RUN_RESULTS.md](RUN_RESULTS.md). Be direct about these limits if asked; don't lead with them instead of explaining the engineering work.
 

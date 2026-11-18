@@ -12,7 +12,7 @@ collection onto Apify so the run has an Actor ID, run ID and run log to
 submit to Gilad. No paid proxy, no login, no Store Actor.
 
 Run on Apify:
-    apify push          # from this directory, signed in as Shiv's account
+    apify push          # from this directory, signed in as his account
     # then start a run in the Apify Console with the input in actor.json,
     # or: apify call cwt-public-finance-sources --input-file input.json
 

@@ -13,12 +13,12 @@ No login, no paid proxy, no Store Actor.
 - `.actor/actor.json` — Actor metadata + input schema + dataset schema.
 - `Dockerfile`, `requirements.txt` — `apify/actor-python:3.12` base.
 
-## Create it in Shiv's Apify account (Shiv's account only)
+## Create it in Sai Shiva Sanjeeth Paikarao's Apify account (his account only)
 
 ```bash
 cd apify-actor
 npm install -g apify-cli        # once
-apify login                     # Shiv's Apify account (Free plan)
+apify login                     # Sai Shiva Sanjeeth Paikarao's Apify account (Free plan)
 apify push                      # creates the Actor, prints its ID
 ```
 
@@ -30,7 +30,7 @@ echo '{"actor_id": "<the Actor ID from apify push>"}' > ../config/apify_actor.js
 
 (Or pass `--actor-id` directly to the run script.)
 
-## Run it (Shiv's token only)
+## Run it (his token only)
 
 ```bash
 export APIFY_API_TOKEN='<Shiv's token from console.apify.com/account/integrations>'

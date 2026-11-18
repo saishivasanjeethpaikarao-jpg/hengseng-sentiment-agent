@@ -23,7 +23,7 @@ import main as actor_main  # noqa: E402
 def test_actor_json_valid():
     actor_json = json.loads((ROOT / "apify-actor" / ".actor" / "actor.json").read_text(encoding="utf-8"))
     assert actor_json["name"] == "cwt-public-finance-sources"
-    assert actor_json["dockerfile"] == "./Dockerfile"
+    assert actor_json["dockerfile"] == "../Dockerfile"  # relative to .actor/; Dockerfile lives in apify-actor/ (verified: apify push built with this path)
     assert actor_json["input"]["properties"]["lookback_days"]["default"] == 10
     assert actor_json["storages"]["dataset"]["fields"]["ticker"]["type"] == "string"
 

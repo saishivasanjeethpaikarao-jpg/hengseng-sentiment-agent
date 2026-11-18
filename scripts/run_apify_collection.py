@@ -22,7 +22,7 @@ The script:
   4. Prints the Actor ID, run ID and row counts — the IDs Gilad needs.
 
 The Actor itself lives in apify-actor/ (see its README for how to create it
-in Shiv's Apify account). This script never creates an Actor and never
+in Sai Shiva Sanjeeth Paikarao's Apify account). This script never creates an Actor and never
 spends anything except the one run it starts after the confirmation gate.
 """
 
@@ -122,7 +122,7 @@ def main() -> int:
 
     token = os.environ.get("APIFY_API_TOKEN")
     if not token:
-        print("APIFY_API_TOKEN is not set. This must be Shiv's Apify API token "
+        print("APIFY_API_TOKEN is not set. This must be Sai Shiva Sanjeeth Paikarao's Apify API token "
               "(his Apify account, Free plan) — create it at "
               "https://console.apify.com/account/integrations and export it; "
               "never paste it into a file or chat.", file=sys.stderr)
@@ -179,6 +179,7 @@ def main() -> int:
     for col in cols:
         if col not in df.columns:
             df[col] = None
+    (ROOT / "data" / "normalized").mkdir(parents=True, exist_ok=True)
     df[cols].to_csv(ROOT / "data" / "normalized" / "apify_posts.csv", index=False)
     print(f"Actor ID: {actor_id}")
     print(f"Run ID: {run_id}")
