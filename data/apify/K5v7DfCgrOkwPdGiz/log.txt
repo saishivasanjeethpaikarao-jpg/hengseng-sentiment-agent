@@ -1,0 +1,28 @@
+2026-11-16T04:05:52.214Z ACTOR: Pulling container image of build ZguMxpOqlgOgneYCC from registry.
+2026-11-16T04:05:53.212Z ACTOR: Creating container.
+2026-11-16T04:05:53.266Z ACTOR: Starting container.
+2026-11-16T04:05:53.267Z ACTOR: Running under "LIMITED_PERMISSIONS".
+2026-11-16T04:05:54.238Z Actor is running on the Apify platform, `disable_browser_sandbox` was changed to True.
+2026-11-16T04:05:54.240Z [apify] INFO  Initializing Actor ({"apify_sdk_version": "4.2.1", "apify_client_version": "3.5.1", "crawlee_version": "1.11.2", "python_version": "3.12.15", "os": "linux", "is_running_in_ipython": false})
+2026-11-16T04:06:17.941Z 0700.HK LIHKG: 1 retained
+2026-11-16T04:06:22.598Z 9988.HK LIHKG: 3 retained
+2026-11-16T04:06:22.641Z 0005.HK LIHKG: 0 retained
+2026-11-16T04:06:22.771Z 3690.HK LIHKG: 0 retained
+2026-11-16T04:06:22.773Z 1299.HK LIHKG: 0 retained
+2026-11-16T04:06:38.646Z 0700.HK Moomoo_Community: 0 retained
+2026-11-16T04:06:54.196Z 9988.HK Moomoo_Community: 0 retained
+2026-11-16T04:07:09.672Z 0005.HK Moomoo_Community: 0 retained
+2026-11-16T04:07:25.036Z 3690.HK Moomoo_Community: 0 retained
+2026-11-16T04:07:40.484Z 1299.HK Moomoo_Community: 0 retained
+2026-11-16T04:07:49.609Z 005930.KS Naver_Finance_Stock_Discussion: 137 retained
+2026-11-16T04:07:58.254Z 000660.KS Naver_Finance_Stock_Discussion: 127 retained
+2026-11-16T04:08:06.846Z 035420.KS Naver_Finance_Stock_Discussion: 149 retained
+2026-11-16T04:08:16.036Z 035720.KS Naver_Finance_Stock_Discussion: 150 retained
+2026-11-16T04:08:24.978Z 005380.KS Naver_Finance_Stock_Discussion: 148 retained
+2026-11-16T04:08:36.172Z 005930.KS Daum_Finance_Forum: 90 retained
+2026-11-16T04:08:47.059Z 000660.KS Daum_Finance_Forum: 40 retained
+2026-11-16T04:08:58.199Z 035420.KS Daum_Finance_Forum: 2 retained
+2026-11-16T04:09:03.362Z 035720.KS Daum_Finance_Forum: 1 retained
+2026-11-16T04:09:14.044Z 005380.KS Daum_Finance_Forum: 7 retained
+2026-11-16T04:09:30.251Z [apify] INFO  Pushed 644 rows to the dataset.
+2026-11-16T04:09:30.253Z [apify] INFO  Exiting Actor ({"exit_code": 0})
