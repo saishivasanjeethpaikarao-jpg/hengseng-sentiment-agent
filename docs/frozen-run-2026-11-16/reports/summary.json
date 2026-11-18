@@ -1,0 +1,118 @@
+{
+  "run_utc": "2026-11-16T04:34:22.522521+00:00",
+  "prices_rows": 4875,
+  "prices_date_start": "2024-11-18",
+  "daily_bar_latest_date": "2026-11-16",
+  "posts": 1990,
+  "post_duplicates_removed": 155,
+  "news": 188,
+  "quote_snapshots": 10,
+  "quote_daily_closes_missing": 0,
+  "missing_followers": 1990,
+  "spend_usd": 0.05,
+  "exa_called": true,
+  "apify_run": true,
+  "apify_actor_id": "0jwqlJJLDge2NcQ1x",
+  "apify_run_id": "nl0xo2ot0DVeCq2nu",
+  "apify_run_utc": "2026-11-16",
+  "exa_queries": 10,
+  "exa_records": 80,
+  "exa_spend_usd": "not measurable via API; a few cents expected",
+  "missing_telemetry": {
+    "likes": 12,
+    "reposts": 1990,
+    "views": 19,
+    "author_followers": 1990
+  },
+  "timezone_assumptions": "Naive Naver/Daum site timestamps were explicitly interpreted as Asia/Seoul; source-clock accuracy was not independently certified.",
+  "models": {
+    "HKEX": {
+      "price_only_oos": {
+        "n_test": 1940,
+        "test_dates": 388,
+        "test_start": "2025-04-22",
+        "test_end": "2026-11-13",
+        "mae_return": 0.016377764925268594,
+        "zero_baseline_mae": 0.01628093293455188,
+        "directional_accuracy": 0.4706185567010309,
+        "model": "pooled Ridge alpha=1; price-only",
+        "features": [
+          "return_1d",
+          "return_5d",
+          "volatility_5d"
+        ],
+        "warning": "This long history validates price features only, not a sentiment edge."
+      },
+      "short_sentiment_experiment": {
+        "feature_start": "2026-11-04",
+        "sessions": 9,
+        "social_observed_rows": 15,
+        "social_observed_dates": 9,
+        "status": "exploratory only; too few sessions for a reliable edge claim",
+        "warning": "Bounded retrospective sample; missing collection is not neutral. Text editing/survivorship and incomplete source coverage remain.",
+        "metrics": {
+          "n_test": 30,
+          "test_dates": 6,
+          "test_start": "2026-11-06",
+          "test_end": "2026-11-13",
+          "mae_return": 0.09451504697933566,
+          "zero_baseline_mae": 0.01922063571040687,
+          "directional_accuracy": 0.4
+        },
+        "paired_price_only_metrics": {
+          "n_test": 30,
+          "test_dates": 6,
+          "test_start": "2026-11-06",
+          "test_end": "2026-11-13",
+          "mae_return": 0.10795524895389196,
+          "zero_baseline_mae": 0.01922063571040687,
+          "directional_accuracy": 0.3333333333333333
+        }
+      }
+    },
+    "KRX": {
+      "price_only_oos": {
+        "n_test": 1900,
+        "test_dates": 380,
+        "test_start": "2025-04-22",
+        "test_end": "2026-11-13",
+        "mae_return": 0.02718648348019693,
+        "zero_baseline_mae": 0.027039870729944022,
+        "directional_accuracy": 0.4805263157894737,
+        "model": "pooled Ridge alpha=1; price-only",
+        "features": [
+          "return_1d",
+          "return_5d",
+          "volatility_5d"
+        ],
+        "warning": "This long history validates price features only, not a sentiment edge."
+      },
+      "short_sentiment_experiment": {
+        "feature_start": "2026-11-04",
+        "sessions": 9,
+        "social_observed_rows": 29,
+        "social_observed_dates": 9,
+        "status": "exploratory only; too few sessions for a reliable edge claim",
+        "warning": "Bounded retrospective sample; missing collection is not neutral. Text editing/survivorship and incomplete source coverage remain.",
+        "metrics": {
+          "n_test": 30,
+          "test_dates": 6,
+          "test_start": "2026-11-06",
+          "test_end": "2026-11-13",
+          "mae_return": 0.10757879847707973,
+          "zero_baseline_mae": 0.023528457050619213,
+          "directional_accuracy": 0.4
+        },
+        "paired_price_only_metrics": {
+          "n_test": 30,
+          "test_dates": 6,
+          "test_start": "2026-11-06",
+          "test_end": "2026-11-13",
+          "mae_return": 0.08779055940841214,
+          "zero_baseline_mae": 0.023528457050619213,
+          "directional_accuracy": 0.5
+        }
+      }
+    }
+  }
+}

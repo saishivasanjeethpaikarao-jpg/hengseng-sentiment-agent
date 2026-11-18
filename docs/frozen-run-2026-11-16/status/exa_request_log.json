@@ -1,0 +1,33 @@
+{
+  "retrieved_at_utc": "2026-11-16T04:19:48.287769Z",
+  "finished_at_utc": "2026-11-16T04:19:59.295528Z",
+  "provider": "Exa (exa.ai/search)",
+  "queries": [
+    "\"Tencent Holdings\" OR \"0700.HK\" stock news",
+    "\"Alibaba Group\" OR \"9988.HK\" stock news",
+    "\"HSBC Holdings\" OR \"0005.HK\" stock news",
+    "\"Meituan\" OR \"3690.HK\" stock news",
+    "\"AIA Group\" OR \"1299.HK\" stock news",
+    "\"Samsung Electronics\" OR \"005930.KS\" stock news",
+    "\"SK hynix\" OR \"000660.KS\" stock news",
+    "\"Naver Corporation\" OR \"035420.KS\" stock news",
+    "\"Kakao Corporation\" OR \"035720.KS\" stock news",
+    "\"Hyundai Motor\" OR \"005380.KS\" stock news"
+  ],
+  "days": 10,
+  "num_results_requested": 8,
+  "total_records": 80,
+  "records_by_ticker": {
+    "0005.HK": 8,
+    "000660.KS": 8,
+    "005380.KS": 8,
+    "005930.KS": 8,
+    "035420.KS": 8,
+    "035720.KS": 8,
+    "0700.HK": 8,
+    "1299.HK": 8,
+    "3690.HK": 8,
+    "9988.HK": 8
+  },
+  "note": "API key is not recorded here. Response items are public news data."
+}
